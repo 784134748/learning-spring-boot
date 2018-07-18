@@ -10,6 +10,7 @@
 
     <modules>
         <module>learning-core</module>
+        <module>learning-security</module>
     </modules>
 
     <name>learning-spring-boot</name>
