@@ -73,6 +73,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
 
                 .antMatchers("/auth/**").permitAll()
+                //TODO 控制swagger2资源的访问权限
+                .antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources", "/configuration/security", "/swagger-ui.html", "/webjars/**", "/swagger-resources/configuration/ui", "/swagge‌​r-ui.html").permitAll()
                 .anyRequest().authenticated();
 
         // Custom JWT based security filter
