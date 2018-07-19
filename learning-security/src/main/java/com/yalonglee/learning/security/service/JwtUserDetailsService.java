@@ -36,7 +36,7 @@ public class JwtUserDetailsService implements UserDetailsService {
         user.setLastname("admin");
         user.setEmail("admin@admin.com");
         user.setEnabled(true);
-        user.setLastPasswordResetDate(new Date(System.currentTimeMillis()));
+        user.setLastPasswordResetDate(new Date(System.currentTimeMillis() - 24 * 60 * 60 * 1000));
         user.setAuthorities(list);
 
         if (user == null) {
