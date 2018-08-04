@@ -1,4 +1,4 @@
-package com.yalonglee.learning.security.service;
+package com.yalonglee.learning.security.service.security;
 
 import java.io.Serializable;
 

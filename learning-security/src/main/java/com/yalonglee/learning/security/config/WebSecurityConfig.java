@@ -3,7 +3,7 @@ package com.yalonglee.learning.security.config;
 import com.yalonglee.learning.security.JwtAuthenticationEntryPoint;
 import com.yalonglee.learning.security.JwtAuthorizationTokenFilter;
 import com.yalonglee.learning.security.JwtTokenUtil;
-import com.yalonglee.learning.security.service.JwtUserDetailsService;
+import com.yalonglee.learning.security.service.security.JwtUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -73,9 +73,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
 
                 .antMatchers("/auth/**").permitAll()
-                //TODO 控制swagger2资源的访问权限
+
                 .antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources", "/configuration/security", "/swagger-ui.html", "/webjars/**", "/swagger-resources/configuration/ui", "/swagge‌​r-ui.html").permitAll()
-                .anyRequest().authenticated();
+//                .anyRequest().authenticated();
+                .anyRequest().permitAll();
+
 
         // Custom JWT based security filter
         JwtAuthorizationTokenFilter authenticationTokenFilter = new JwtAuthorizationTokenFilter(userDetailsService(), jwtTokenUtil, tokenHeader);

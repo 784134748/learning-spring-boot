@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan(basePackages = "com.yalonglee.learning.*")
+@ComponentScan(basePackages = "com.yalonglee.learning")
 public class LearningCoreApplication {
 
     public static void main(String[] args) {

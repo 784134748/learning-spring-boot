@@ -1,4 +1,4 @@
-package com.yalonglee.learning.security.controller;
+package com.yalonglee.learning.security.controller.security;
 
 import com.yalonglee.learning.security.JwtTokenUtil;
 import com.yalonglee.learning.security.JwtUser;

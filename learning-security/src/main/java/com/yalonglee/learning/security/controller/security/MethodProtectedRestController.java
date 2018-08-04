@@ -1,4 +1,4 @@
-package com.yalonglee.learning.security.controller;
+package com.yalonglee.learning.security.controller.security;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

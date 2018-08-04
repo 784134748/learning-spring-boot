@@ -1,4 +1,4 @@
-package com.yalonglee.learning.security.service;
+package com.yalonglee.learning.security.service.security;
 
 import com.yalonglee.learning.security.JwtUserFactory;
 import com.yalonglee.learning.security.model.security.Authority;

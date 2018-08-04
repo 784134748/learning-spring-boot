@@ -1,9 +1,10 @@
-package com.yalonglee.learning.security.controller;
+package com.yalonglee.learning.security.controller.security;
 
 import com.yalonglee.learning.security.JwtAuthenticationRequest;
 import com.yalonglee.learning.security.JwtTokenUtil;
 import com.yalonglee.learning.security.JwtUser;
-import com.yalonglee.learning.security.service.JwtAuthenticationResponse;
+import com.yalonglee.learning.security.controller.security.AuthenticationException;
+import com.yalonglee.learning.security.service.security.JwtAuthenticationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
