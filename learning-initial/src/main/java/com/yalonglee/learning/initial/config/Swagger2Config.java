@@ -1,4 +1,4 @@
-package com.yalonglee.learning.core.config;
+package com.yalonglee.learning.initial.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,7 +11,7 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
- * <p>《一句话功能简述》
+ * <p>《swagger2配置文件》
  * <p><功能详细描述>
  * <p>
  * <p>Copyright (c) 2018, listener@iflytek.com All Rights Reserve</p>

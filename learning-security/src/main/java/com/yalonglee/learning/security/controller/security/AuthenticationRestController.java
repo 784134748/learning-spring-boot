@@ -5,6 +5,8 @@ import com.yalonglee.learning.security.JwtTokenUtil;
 import com.yalonglee.learning.security.JwtUser;
 import com.yalonglee.learning.security.controller.security.AuthenticationException;
 import com.yalonglee.learning.security.service.security.JwtAuthenticationResponse;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,12 +25,14 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Objects;
 
 @RestController
+@Api(tags = "鉴权相关接口")
 public class AuthenticationRestController {
 
     @Value("${jwt.header}")
     private String tokenHeader;
 
     @Autowired
+    @SuppressWarnings("all")
     private AuthenticationManager authenticationManager;
 
     @Autowired
@@ -38,6 +42,13 @@ public class AuthenticationRestController {
     @Qualifier("jwtUserDetailsService")
     private UserDetailsService userDetailsService;
 
+    /**
+     * 获取token
+     * @param authenticationRequest
+     * @return
+     * @throws AuthenticationException
+     */
+    @ApiOperation(value = "获取token")
     @RequestMapping(value = "${jwt.route.authentication.path}", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtAuthenticationRequest authenticationRequest) throws AuthenticationException {
 
@@ -51,6 +62,12 @@ public class AuthenticationRestController {
         return ResponseEntity.ok(new JwtAuthenticationResponse(token));
     }
 
+    /**
+     * 刷新token
+     * @param request
+     * @return
+     */
+    @ApiOperation(value = "刷新token")
     @RequestMapping(value = "${jwt.route.authentication.refresh}", method = RequestMethod.GET)
     public ResponseEntity<?> refreshAndGetAuthenticationToken(HttpServletRequest request) {
         String authToken = request.getHeader(tokenHeader);
@@ -64,6 +81,20 @@ public class AuthenticationRestController {
         } else {
             return ResponseEntity.badRequest().body(null);
         }
+    }
+
+    /**
+     * 获取当前登录用户
+     * @param request
+     * @return
+     */
+    @ApiOperation(value = "获取当前登录用户")
+    @RequestMapping(value = "/current/user", method = RequestMethod.GET)
+    public JwtUser getAuthenticatedUser(HttpServletRequest request) {
+        String token = request.getHeader(tokenHeader).substring(7);
+        String username = jwtTokenUtil.getUsernameFromToken(token);
+        JwtUser user = (JwtUser) userDetailsService.loadUserByUsername(username);
+        return user;
     }
 
     @ExceptionHandler({AuthenticationException.class})

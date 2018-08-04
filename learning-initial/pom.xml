@@ -4,11 +4,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.yalonglee</groupId>
-    <artifactId>learning-core</artifactId>
+    <artifactId>learning-initial</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>learning-core</name>
+    <name>learning-initial</name>
     <description>project for Spring Boot</description>
 
     <parent>
@@ -16,6 +16,12 @@
         <artifactId>learning-spring-boot</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -29,19 +35,17 @@
             <scope>test</scope>
         </dependency>
 
+        <!--引入子模块-->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <groupId>com.yalonglee</groupId>
+            <artifactId>learning-security</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
-        <!--swagger2-->
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
+            <groupId>com.yalonglee</groupId>
+            <artifactId>learning-core</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
     </dependencies>

@@ -1,4 +1,4 @@
-package com.yalonglee.learning.security.config;
+package com.yalonglee.learning.initial.config;
 
 import com.yalonglee.learning.security.JwtAuthenticationEntryPoint;
 import com.yalonglee.learning.security.JwtAuthorizationTokenFilter;
@@ -21,6 +21,17 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ * <p>《spring-security配置文件》
+ * <p><功能详细描述>
+ * <p>
+ * <p>Copyright (c) 2018, listener@iflytek.com All Rights Reserve</p>
+ * <p>Company : 科大讯飞</p>
+ *
+ * @author listener
+ * @version [V1.0, 2018/7/14]
+ * @see [相关类/方法]
+ */
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -75,7 +86,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/auth/**").permitAll()
 
                 .antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources", "/configuration/security", "/swagger-ui.html", "/webjars/**", "/swagger-resources/configuration/ui", "/swagge‌​r-ui.html").permitAll()
-//                .anyRequest().authenticated();
+
                 .anyRequest().permitAll();
 
 
