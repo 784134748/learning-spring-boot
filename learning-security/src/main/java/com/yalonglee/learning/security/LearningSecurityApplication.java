@@ -1,12 +1,12 @@
-package com.yalonglee.learning.core;
+package com.yalonglee.learning.security;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class LearningCoreApplication {
+public class LearningSecurityApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(LearningCoreApplication.class, args);
+        SpringApplication.run(LearningSecurityApplication.class, args);
     }
 }

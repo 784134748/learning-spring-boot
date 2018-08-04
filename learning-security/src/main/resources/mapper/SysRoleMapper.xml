@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE mapper
+        PUBLIC '-//mybatis.org//DTD Mapper 3.0//EN'
+        'http://mybatis.org/dtd/mybatis-3-mapper.dtd' >
+<mapper namespace='com.yalonglee.learning.security.mapper.SysRoleMapper'>
+
+    <select id='sys_role-select' resultType='com.yalonglee.learning.security.model.SysRole' parameterType='java.util.Map'>
+        select * from sys_role
+        <where>
+            <include refid='query_filter'/>
+        </where>
+        <if test='start != null'>
+            LIMIT #{start},#{limit}
+        </if>
+    </select>
+
+    <delete id='sys_role-delete' parameterType='java.util.Map'>
+        delete from sys_role where id = #{id};
+    </delete>
+
+    <select id='sys_role-count' resultType='java.lang.Integer' parameterType='java.util.Map'>
+        select count(*) from sys_role
+        <where>
+            <include refid='query_filter'/>
+        </where>
+    </select>
+
+
+    <insert id='sys_role-insert' parameterType='java.util.Map' useGeneratedKeys='true' keyProperty='id'>
+        insert into sys_role
+        <trim prefix='(' suffix=')' suffixOverrides=','>
+                <if test='id != null'>id,</if>
+                <if test='name != null'>name,</if>
+                <if test='type != null'>type,</if>
+                <if test='status != null'>status,</if>
+                <if test='remark != null'>remark,</if>
+                <if test='operator != null'>operator,</if>
+                <if test='operateTime != null'>operate_time,</if>
+                <if test='operateIp != null'>operate_ip,</if>
+        </trim>
+        <trim prefix='values (' suffix=')' suffixOverrides=','>
+                <if test='id != null'>#{id},</if>
+                <if test='name != null'>#{name},</if>
+                <if test='type != null'>#{type},</if>
+                <if test='status != null'>#{status},</if>
+                <if test='remark != null'>#{remark},</if>
+                <if test='operator != null'>#{operator},</if>
+                <if test='operateTime != null'>#{operateTime},</if>
+                <if test='operateIp != null'>#{operateIp},</if>
+        </trim>
+    </insert>
+
+    <update id='sys_role-update' parameterType='java.util.Map'>
+        update sys_role
+        <set>
+                <if test='id != null'>id = #{id},</if>
+                <if test='name != null'>name = #{name},</if>
+                <if test='type != null'>type = #{type},</if>
+                <if test='status != null'>status = #{status},</if>
+                <if test='remark != null'>remark = #{remark},</if>
+                <if test='operator != null'>operator = #{operator},</if>
+                <if test='operateTime != null'>operate_time = #{operateTime},</if>
+                <if test='operateIp != null'>operate_ip = #{operateIp},</if>
+        </set>
+        where id = #{id}
+    </update>
+
+
+    <sql id='query_filter'>
+            <if test='id != null'>and id = #{id}</if>
+            <if test='name != null'>and name = #{name}</if>
+            <if test='type != null'>and type = #{type}</if>
+            <if test='status != null'>and status = #{status}</if>
+            <if test='remark != null'>and remark = #{remark}</if>
+            <if test='operator != null'>and operator = #{operator}</if>
+            <if test='operateTime != null'>and operate_time = #{operateTime}</if>
+            <if test='operateIp != null'>and operate_ip = #{operateIp}</if>
+    </sql>
+
+
+</mapper>
