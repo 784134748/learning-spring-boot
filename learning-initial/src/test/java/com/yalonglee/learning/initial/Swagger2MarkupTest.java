@@ -16,9 +16,12 @@
  *
  *
  */
-package com.yalonglee.learning.core;
+package com.yalonglee.learning.initial;
 
-import com.yalonglee.learning.core.config.Swagger2Config;
+import com.yalonglee.learning.core.LearningCoreApplication;
+import com.yalonglee.learning.initial.config.Swagger2Config;
+import com.yalonglee.learning.initial.config.WebSecurityConfig;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -33,6 +36,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.io.BufferedWriter;
 import java.nio.charset.StandardCharsets;
@@ -45,7 +50,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
 @AutoConfigureRestDocs(outputDir = "build/asciidoc/snippets")
-@SpringBootTest(classes = {LearningCoreApplication.class, Swagger2Config.class})
+@SpringBootTest(classes = {LearningInitialApplication.class, Swagger2Config.class, WebSecurityConfig.class})
 @AutoConfigureMockMvc
 public class Swagger2MarkupTest {
 
@@ -54,6 +59,22 @@ public class Swagger2MarkupTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    /**
+     * web项目上下文
+     */
+    @Autowired
+    private WebApplicationContext webApplicationContext;
+
+
+    /**
+     * 所有测试方法执行之前执行该方法
+     */
+    @Before
+    public void before() {
+        //获取mockmvc对象实例
+        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+    }
 
     @Test
     public void createSpringfoxSwaggerJson() throws Exception {
@@ -68,7 +89,7 @@ public class Swagger2MarkupTest {
         MockHttpServletResponse response = mvcResult.getResponse();
         String swaggerJson = response.getContentAsString();
         Files.createDirectories(Paths.get(outputDir));
-        try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(outputDir, "swagger.json"), StandardCharsets.UTF_8)){
+        try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(outputDir, "swagger.json"), StandardCharsets.UTF_8)) {
             writer.write(swaggerJson);
         }
     }
