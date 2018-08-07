@@ -2,8 +2,9 @@ package com.yalonglee.learning.security.model;
 
 import lombok.*;
 
-@Setter
-@Getter
+import java.time.LocalDateTime;
+
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -40,7 +41,7 @@ public class SysDept {
     /**
      * 最后一次操作时间
      */
-    private java.sql.Timestamp operateTime;
+    private LocalDateTime operateTime;
     /**
      * 最后一次更新操作者的ip地址
      */

@@ -18,9 +18,8 @@
  */
 package com.yalonglee.learning.initial;
 
-import com.yalonglee.learning.core.LearningCoreApplication;
 import com.yalonglee.learning.initial.config.Swagger2Config;
-import com.yalonglee.learning.initial.config.WebSecurityConfig;
+import com.yalonglee.learning.initial.config.SecurityConfig;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -50,7 +49,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
 @AutoConfigureRestDocs(outputDir = "build/asciidoc/snippets")
-@SpringBootTest(classes = {LearningInitialApplication.class, Swagger2Config.class, WebSecurityConfig.class})
+@SpringBootTest(classes = {LearningInitialApplication.class, Swagger2Config.class, SecurityConfig.class})
 @AutoConfigureMockMvc
 public class Swagger2MarkupTest {
 

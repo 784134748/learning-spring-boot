@@ -19,26 +19,31 @@ public class SysDeptController {
 
     @ApiOperation(value = "删除部门")
     @DeleteMapping("/dept/{dept_id}")
-    public ResponseEntity<?> deleteDept(@PathVariable("dept_id") Long deptId) {
+    public ResponseEntity<?> deleteDeptById(@PathVariable("dept_id") Long deptId) {
         return ResponseEntity.ok(null);
     }
 
     @ApiOperation(value = "更新部门")
     @PutMapping("/dept/{dept_id}")
-    public ResponseEntity<?> updateDept(@PathVariable("dept_id") Long deptId, @RequestBody DeptForm deptForm) {
+    public ResponseEntity<?> updateDeptById(@PathVariable("dept_id") Long deptId, @RequestBody DeptForm deptForm) {
         return ResponseEntity.ok(null);
     }
 
     @ApiOperation(value = "分页查询部门")
-    @GetMapping("/depts")
-    public ResponseEntity<?> getDepts() {
+    @GetMapping("/dept/list")
+    public ResponseEntity<?> getDeptList() {
         return ResponseEntity.ok(null);
     }
 
     @ApiOperation(value = "部门详情")
     @GetMapping("/dept/{dept_id}")
-    public ResponseEntity<?> getDepts(@PathVariable("dept_id") Long deptId) {
+    public ResponseEntity<?> getDeptById(@PathVariable("dept_id") Long deptId) {
         return ResponseEntity.ok(null);
     }
 
+    @ApiOperation(value = "获取部门树")
+    @GetMapping("/dept/tree")
+    public ResponseEntity<?> getDeptTree() {
+        return ResponseEntity.ok(null);
+    }
 }

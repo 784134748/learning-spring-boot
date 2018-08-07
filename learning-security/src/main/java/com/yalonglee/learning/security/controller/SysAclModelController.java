@@ -19,27 +19,32 @@ public class SysAclModelController {
 
     @ApiOperation(value = "删除权限模块")
     @DeleteMapping("/acl_model/{acl_model_id}")
-    public ResponseEntity<?> deleteAclModel(@PathVariable("acl_model_id") Long aclModelId) {
+    public ResponseEntity<?> deleteAclModelById(@PathVariable("acl_model_id") Long aclModelId) {
         return ResponseEntity.ok(null);
     }
 
     @ApiOperation(value = "更新权限模块")
     @PutMapping("/acl_model/{acl_model_id}")
-    public ResponseEntity<?> updateAclModel(@PathVariable("acl_model_id") Long aclModelId, @RequestBody AclModelForm aclModelForm) {
+    public ResponseEntity<?> updateAclModelById(@PathVariable("acl_model_id") Long aclModelId, @RequestBody AclModelForm aclModelForm) {
         return ResponseEntity.ok(null);
     }
 
     @ApiOperation(value = "分页查询权限模块")
-    @GetMapping("/acl_models")
-    public ResponseEntity<?> getAclModels() {
+    @GetMapping("/acl_model/list")
+    public ResponseEntity<?> getAclModelList() {
         return ResponseEntity.ok(null);
     }
 
     @ApiOperation(value = "权限模块详情")
     @GetMapping("/acl_model/{acl_model_id}")
-    public ResponseEntity<?> getAclModels(@PathVariable("acl_model_id") Long aclModelId) {
+    public ResponseEntity<?> getAclModelById(@PathVariable("acl_model_id") Long aclModelId) {
         return ResponseEntity.ok(null);
     }
 
+    @ApiOperation(value = "获取权限模块树")
+    @GetMapping("/acl_model/tree")
+    public ResponseEntity<?> getAclModelTree(){
+        return ResponseEntity.ok(null);
+    }
 
 }

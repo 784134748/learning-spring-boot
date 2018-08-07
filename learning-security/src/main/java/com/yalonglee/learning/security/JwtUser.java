@@ -6,13 +6,13 @@ import io.swagger.annotations.ApiModelProperty;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.sql.Date;
 import java.util.Collection;
-import java.util.Date;
 
 /**
  * Created by stephan on 20.03.16.
  */
-@ApiModel(value = "JwtUser",description = "登录用户信息")
+@ApiModel(value = "JwtUser", description = "登录用户信息")
 public class JwtUser implements UserDetails {
 
     /**
@@ -20,30 +20,28 @@ public class JwtUser implements UserDetails {
      */
     private final Long id;
 
-    @ApiModelProperty(value = "用户名",position = 1,example = "super admin")
+    @ApiModelProperty(value = "用户名", position = 1, example = "super admin")
     private final String username;
 
-    @ApiModelProperty(value = "姓",position = 2,example = "super")
+    @ApiModelProperty(value = "姓", position = 2, example = "super")
     private final String firstname;
 
-    @ApiModelProperty(value = "名",position = 3,example = "admin")
+    @ApiModelProperty(value = "名", position = 3, example = "admin")
     private final String lastname;
 
-    @ApiModelProperty(value = "密码",position = 4,example = "admin")
+    @ApiModelProperty(value = "密码", position = 4, example = "admin")
     private final String password;
 
-    @ApiModelProperty(value = "邮箱",position = 5,example = "142141414@qq.com")
+    @ApiModelProperty(value = "邮箱", position = 5, example = "142141414@qq.com")
     private final String email;
 
-    @ApiModelProperty(value = "权限",position = 6)
+    @ApiModelProperty(value = "角色/权限", position = 6)
     private final Collection<? extends GrantedAuthority> authorities;
 
-    @ApiModelProperty(value = "是否有效",position = 7,example = "true")
+    @ApiModelProperty(value = "是否有效", position = 7, example = "true")
     private final boolean enabled;
 
-    /**
-     * 最近密码重置日期
-     */
+    @ApiModelProperty(value = "最近密码重置日期", position = 8, example = "2018-10-11 00:00:00")
     private final Date lastPasswordResetDate;
 
     public JwtUser(

@@ -19,25 +19,37 @@ public class SysAclController {
 
     @ApiOperation(value = "删除权限")
     @DeleteMapping("/acl/{acl_id}")
-    public ResponseEntity<?> deleteAcl(@PathVariable("acl_id") Long aclId) {
+    public ResponseEntity<?> deleteAclById(@PathVariable("acl_id") Long aclId) {
         return ResponseEntity.ok(null);
     }
 
     @ApiOperation(value = "更新权限")
     @PutMapping("/acl/{acl_id}")
-    public ResponseEntity<?> updateAcl(@PathVariable("acl_id") Long aclId, @RequestBody AclForm aclForm) {
+    public ResponseEntity<?> updateAclById(@PathVariable("acl_id") Long aclId, @RequestBody AclForm aclForm) {
         return ResponseEntity.ok(null);
     }
 
     @ApiOperation(value = "分页查询权限")
-    @GetMapping("/acls")
-    public ResponseEntity<?> getAcls() {
+    @GetMapping("/acl/list")
+    public ResponseEntity<?> getAclList() {
         return ResponseEntity.ok(null);
     }
 
     @ApiOperation(value = "权限详情")
     @GetMapping("/acl/{acl_id}")
-    public ResponseEntity<?> getAcls(@PathVariable("acl_id") Long aclId) {
+    public ResponseEntity<?> getAclById(@PathVariable("acl_id") Long aclId) {
+        return ResponseEntity.ok(null);
+    }
+
+    @ApiOperation(value = "当前权限被哪些用户所拥有")
+    @GetMapping("/acl/{acl_id}/user/list")
+    public ResponseEntity<?> getUserListByAclId(@PathVariable("acl_id") Long aclId){
+        return ResponseEntity.ok(null);
+    }
+
+    @ApiOperation(value = "当前权限被哪些角色所拥有")
+    @GetMapping("/acl/{acl_id}/role/list")
+    public ResponseEntity<?> getRoleListByAclId(@PathVariable("acl_id") Long aclId){
         return ResponseEntity.ok(null);
     }
 

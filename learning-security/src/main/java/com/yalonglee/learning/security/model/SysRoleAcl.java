@@ -2,8 +2,9 @@ package com.yalonglee.learning.security.model;
 
 import lombok.*;
 
-@Setter
-@Getter
+import java.time.LocalDateTime;
+
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -28,7 +29,7 @@ public class SysRoleAcl {
     /**
      * 最后一次更新的时间
      */
-    private java.sql.Timestamp operateTime;
+    private LocalDateTime operateTime;
     /**
      * 最后一次更新者的ip
      */

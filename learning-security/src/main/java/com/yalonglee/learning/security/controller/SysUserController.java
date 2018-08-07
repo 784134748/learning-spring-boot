@@ -19,25 +19,31 @@ public class SysUserController {
 
     @ApiOperation(value = "删除角色")
     @DeleteMapping("/user/{user_id}")
-    public ResponseEntity<?> deleteUser(@PathVariable("user_id") Long userId) {
+    public ResponseEntity<?> deleteUserById(@PathVariable("user_id") Long userId) {
         return ResponseEntity.ok(null);
     }
 
     @ApiOperation(value = "更新角色")
     @PutMapping("/user/{user_id}")
-    public ResponseEntity<?> updateUser(@PathVariable("user_id") Long userId, @RequestBody UserForm userForm) {
+    public ResponseEntity<?> updateUserById(@PathVariable("user_id") Long userId, @RequestBody UserForm userForm) {
         return ResponseEntity.ok(null);
     }
 
     @ApiOperation(value = "分页查询角色")
-    @GetMapping("/users")
-    public ResponseEntity<?> getUsers() {
+    @GetMapping("/user/list")
+    public ResponseEntity<?> getUserList() {
         return ResponseEntity.ok(null);
     }
 
     @ApiOperation(value = "角色详情")
     @GetMapping("/user/{user_id}")
-    public ResponseEntity<?> getUsers(@PathVariable("user_id") Long userId) {
+    public ResponseEntity<?> getUserById(@PathVariable("user_id") Long userId) {
+        return ResponseEntity.ok(null);
+    }
+
+    @ApiOperation(value = "获取当前用户拥有的权限列表")
+    @GetMapping("/user/{user_id}/acl/list")
+    public ResponseEntity<?> getAclListByUserId(@PathVariable("user_id") Long userId) {
         return ResponseEntity.ok(null);
     }
 }
