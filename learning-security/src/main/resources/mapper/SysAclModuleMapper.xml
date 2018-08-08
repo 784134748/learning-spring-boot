@@ -1,11 +1,20 @@
 <?xml version='1.0' encoding='UTF-8' ?>
-<!DOCTYPE mapper
-        PUBLIC '-//mybatis.org//DTD Mapper 3.0//EN'
-        'http://mybatis.org/dtd/mybatis-3-mapper.dtd' >
+<!DOCTYPE mapper PUBLIC '-//mybatis.org//DTD Mapper 3.0//EN' 'http://mybatis.org/dtd/mybatis-3-mapper.dtd' >
 <mapper namespace='com.yalonglee.learning.security.mapper.SysAclModuleMapper'>
+    <sql id='Base_Column_List' >
+    id, name, parent_id, level, seq, status, remark, operator, operate_time, operate_ip
+    </sql>
+    <select id='selectByPrimaryKey' resultType='com.yalonglee.learning.security.model.SysAclModule' parameterType='java.lang.Long'>
+        select 
+        <include refid= 'Base_Column_List' />
+        from sys_acl_module 
+        where id = #{id}
+    </select>
 
-    <select id='sys_acl_module-select' resultType='com.yalonglee.learning.security.model.SysAclModule' parameterType='java.util.Map'>
-        select * from sys_acl_module
+    <select id='selectByQuery' resultType='SysAclModule' parameterType='java.util.Map'>
+        select 
+        <include refid= 'Base_Column_List' />
+        from sys_acl_module 
         <where>
             <include refid='query_filter'/>
         </where>
@@ -14,19 +23,18 @@
         </if>
     </select>
 
-    <delete id='sys_acl_module-delete' parameterType='java.util.Map'>
-        delete from sys_acl_module where id = #{id};
+    <delete id='deleteByPrimaryKey' parameterType='java.lang.Long'>
+        delete from sys_acl_module where id = #{id}
     </delete>
 
-    <select id='sys_acl_module-count' resultType='java.lang.Integer' parameterType='java.util.Map'>
+    <select id='count' resultType='java.lang.Integer' parameterType='java.util.Map'>
         select count(*) from sys_acl_module
         <where>
             <include refid='query_filter'/>
         </where>
     </select>
 
-
-    <insert id='sys_acl_module-insert' parameterType='java.util.Map' useGeneratedKeys='true' keyProperty='id'>
+    <insert id='insert' parameterType='java.util.Map' useGeneratedKeys='true' keyProperty='id'>
         insert into sys_acl_module
         <trim prefix='(' suffix=')' suffixOverrides=','>
                 <if test='id != null'>id,</if>
@@ -54,7 +62,7 @@
         </trim>
     </insert>
 
-    <update id='sys_acl_module-update' parameterType='java.util.Map'>
+    <update id='update' parameterType='java.util.Map'>
         update sys_acl_module
         <set>
                 <if test='id != null'>id = #{id},</if>
@@ -70,7 +78,6 @@
         </set>
         where id = #{id}
     </update>
-
 
     <sql id='query_filter'>
             <if test='id != null'>and id = #{id}</if>

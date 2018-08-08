@@ -1,11 +1,20 @@
 <?xml version='1.0' encoding='UTF-8' ?>
-<!DOCTYPE mapper
-        PUBLIC '-//mybatis.org//DTD Mapper 3.0//EN'
-        'http://mybatis.org/dtd/mybatis-3-mapper.dtd' >
+<!DOCTYPE mapper PUBLIC '-//mybatis.org//DTD Mapper 3.0//EN' 'http://mybatis.org/dtd/mybatis-3-mapper.dtd' >
 <mapper namespace='com.yalonglee.learning.security.mapper.SysDeptMapper'>
+    <sql id='Base_Column_List' >
+    id, name, parent_id, level, seq, remark, operator, operate_time, operate_ip
+    </sql>
+    <select id='selectByPrimaryKey' resultType='com.yalonglee.learning.security.model.SysDept' parameterType='java.lang.Long'>
+        select 
+        <include refid= 'Base_Column_List' />
+        from sys_dept 
+        where id = #{id}
+    </select>
 
-    <select id='sys_dept-select' resultType='com.yalonglee.learning.security.model.SysDept' parameterType='java.util.Map'>
-        select * from sys_dept
+    <select id='selectByQuery' resultType='SysDept' parameterType='java.util.Map'>
+        select 
+        <include refid= 'Base_Column_List' />
+        from sys_dept 
         <where>
             <include refid='query_filter'/>
         </where>
@@ -14,19 +23,18 @@
         </if>
     </select>
 
-    <delete id='sys_dept-delete' parameterType='java.util.Map'>
-        delete from sys_dept where id = #{id};
+    <delete id='deleteByPrimaryKey' parameterType='java.lang.Long'>
+        delete from sys_dept where id = #{id}
     </delete>
 
-    <select id='sys_dept-count' resultType='java.lang.Integer' parameterType='java.util.Map'>
+    <select id='count' resultType='java.lang.Integer' parameterType='java.util.Map'>
         select count(*) from sys_dept
         <where>
             <include refid='query_filter'/>
         </where>
     </select>
 
-
-    <insert id='sys_dept-insert' parameterType='java.util.Map' useGeneratedKeys='true' keyProperty='id'>
+    <insert id='insert' parameterType='java.util.Map' useGeneratedKeys='true' keyProperty='id'>
         insert into sys_dept
         <trim prefix='(' suffix=')' suffixOverrides=','>
                 <if test='id != null'>id,</if>
@@ -52,7 +60,7 @@
         </trim>
     </insert>
 
-    <update id='sys_dept-update' parameterType='java.util.Map'>
+    <update id='update' parameterType='java.util.Map'>
         update sys_dept
         <set>
                 <if test='id != null'>id = #{id},</if>
@@ -67,7 +75,6 @@
         </set>
         where id = #{id}
     </update>
-
 
     <sql id='query_filter'>
             <if test='id != null'>and id = #{id}</if>
