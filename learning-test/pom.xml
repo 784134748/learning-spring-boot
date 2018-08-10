@@ -4,11 +4,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.yalonglee</groupId>
-    <artifactId>learning-core</artifactId>
+    <artifactId>learning-test</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>learning-core</name>
+    <name>learning-test</name>
     <description>project for Spring Boot</description>
 
     <parent>
@@ -24,6 +24,13 @@
     </properties>
 
     <dependencies>
+        <!--引入子模块-->
+        <dependency>
+            <groupId>com.yalonglee</groupId>
+            <artifactId>learning-initial</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
@@ -33,21 +40,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-
-        <!--swagger2-->
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
         </dependency>
 
     </dependencies>
@@ -64,5 +56,6 @@
             </plugin>
         </plugins>
     </build>
+
 
 </project>
