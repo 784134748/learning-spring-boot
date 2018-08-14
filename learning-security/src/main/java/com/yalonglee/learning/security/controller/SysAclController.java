@@ -1,8 +1,11 @@
 package com.yalonglee.learning.security.controller;
 
+import com.yalonglee.learning.security.model.SysAcl;
+import com.yalonglee.learning.security.service.SysAclService;
 import com.yalonglee.learning.security.vo.form.AclForm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,6 +13,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/sys/acl")
 @Api(tags = "权限相关接口")
 public class SysAclController {
+
+    @Autowired
+    private SysAclService sysAclService;
 
     @ApiOperation(value = "新增权限")
     @PostMapping("/acl")
@@ -38,7 +44,8 @@ public class SysAclController {
     @ApiOperation(value = "权限详情")
     @GetMapping("/acl/{acl_id}")
     public ResponseEntity<?> getAclById(@PathVariable("acl_id") Long aclId) {
-        return ResponseEntity.ok(null);
+        SysAcl sysAcl = sysAclService.selectByPrimaryKey(aclId);
+        return ResponseEntity.ok(sysAcl);
     }
 
     @ApiOperation(value = "当前权限被哪些用户所拥有")

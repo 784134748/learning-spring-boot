@@ -31,6 +31,7 @@ public class RoleForm implements Serializable {
     @ApiModelProperty(value = "角色类型", position = 3, example = "1", required = true)
     @Min(value = 1, message = "角色类型不合法")
     @Max(value = 2, message = "角色类型不合法")
+    @Builder.Default
     private Integer type = 1;
 
     @ApiModelProperty(value = "角色状态", position = 4, example = "1", required = true)

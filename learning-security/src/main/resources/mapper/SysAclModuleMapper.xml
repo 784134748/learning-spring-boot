@@ -11,7 +11,7 @@
         where id = #{id}
     </select>
 
-    <select id='selectByQuery' resultType='SysAclModule' parameterType='java.util.Map'>
+    <select id='selectByQuery' resultType='com.yalonglee.learning.security.model.SysAclModule' parameterType='java.util.Map'>
         select 
         <include refid= 'Base_Column_List' />
         from sys_acl_module 

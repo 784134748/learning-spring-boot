@@ -18,7 +18,23 @@ public class SysAclMapperTest {
     private SysAclMapper sysAclMapper;
 
     @Test
-    public void selectSysAclByPrimaryKey(){
-        sysAclMapper.selectByPrimaryKey(1L);
+    void selectByPrimaryKey() {
+
+    }
+
+    @Test
+    void deleteByPrimaryKey() {
+    }
+
+    @Test
+    void count() {
+    }
+
+    @Test
+    void insert() {
+    }
+
+    @Test
+    void update() {
     }
 }

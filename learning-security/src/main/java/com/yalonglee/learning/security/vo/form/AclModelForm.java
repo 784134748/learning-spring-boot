@@ -29,6 +29,7 @@ public class AclModelForm implements Serializable {
     private String name;
 
     @ApiModelProperty(value = "权限模块父节点", position = 3, example = "1", required = true)
+    @Builder.Default
     private Integer parentId = 0;
 
     @ApiModelProperty(value = "权限模块展示顺序", position = 4, example = "1", required = true)

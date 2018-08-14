@@ -27,6 +27,7 @@ public class DeptForm implements Serializable {
     private String name;
 
     @ApiModelProperty(value = "父节点", position = 3, example = "1", required = true)
+    @Builder.Default
     private Integer parentId = 0;
 
     @ApiModelProperty(value = "展示顺序", position = 4, example = "1", required = true)
