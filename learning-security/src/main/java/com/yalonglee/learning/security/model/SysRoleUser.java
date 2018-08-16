@@ -17,39 +17,39 @@ public class SysRoleUser implements Serializable {
   public static final long serialVersionUID = 1L;
 
  /**
-  * null
+  * null【bigint(11) unsigned】
   */
-  @ApiModelProperty(value = "null")
+  @ApiModelProperty(value = "null", dataType = "bigint(11) unsigned")
   private Long id;
 
  /**
-  * 角色id
+  * 角色id【int(11)】
   */
-  @ApiModelProperty(value = "角色id")
-  private Long roleId;
+  @ApiModelProperty(value = "角色id", dataType = "int(11)")
+  private Integer roleId;
 
  /**
-  * 用户id
+  * 用户id【int(11)】
   */
-  @ApiModelProperty(value = "用户id")
-  private Long userId;
+  @ApiModelProperty(value = "用户id", dataType = "int(11)")
+  private Integer userId;
 
  /**
-  * 操作者
+  * 操作者【varchar(20)】
   */
-  @ApiModelProperty(value = "操作者")
+  @ApiModelProperty(value = "操作者", dataType = "varchar(20)")
   private String operator;
 
  /**
-  * 最后一次更新的时间
+  * 最后一次更新的时间【datetime】
   */
-  @ApiModelProperty(value = "最后一次更新的时间")
+  @ApiModelProperty(value = "最后一次更新的时间", dataType = "datetime")
   private java.time.LocalDateTime operateTime;
 
  /**
-  * 最后一次更新者的ip地址
+  * 最后一次更新者的ip地址【varchar(20)】
   */
-  @ApiModelProperty(value = "最后一次更新者的ip地址")
+  @ApiModelProperty(value = "最后一次更新者的ip地址", dataType = "varchar(20)")
   private String operateIp;
 
 
