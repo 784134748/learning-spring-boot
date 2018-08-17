@@ -59,12 +59,12 @@
     <update id='update' parameterType='java.util.Map'>
         update sys_role_user
         <set>
-            <if test='id != null'>id = #{id},</if>
-            <if test='roleId != null'>role_id = #{roleId},</if>
-            <if test='userId != null'>user_id = #{userId},</if>
-            <if test='operator != null'>operator = #{operator},</if>
-            <if test='operateTime != null'>operate_time = #{operateTime},</if>
-            <if test='operateIp != null'>operate_ip = #{operateIp},</if>
+            <if test='id'>id = #{id},</if>
+            <if test='roleId'>role_id = #{roleId},</if>
+            <if test='userId'>user_id = #{userId},</if>
+            <if test='operator'>operator = #{operator},</if>
+            <if test='operateTime'>operate_time = #{operateTime},</if>
+            <if test='operateIp'>operate_ip = #{operateIp},</if>
         </set>
         where id = #{id}
     </update>
@@ -77,6 +77,5 @@
         <if test='operateTime != null'>and operate_time = #{operateTime}</if>
         <if test='operateIp != null'>and operate_ip = #{operateIp}</if>
     </sql>
-
 
 </mapper>

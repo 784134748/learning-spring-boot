@@ -35,10 +35,10 @@ public class SysAcl implements Serializable {
   private String name;
 
  /**
-  * 权限所在的权限模块id【int(11)】
+  * 权限所在的权限模块id【bigint(11)】
   */
-  @ApiModelProperty(value = "权限所在的权限模块id", dataType = "int(11)")
-  private Integer aclModuleId;
+  @ApiModelProperty(value = "权限所在的权限模块id", dataType = "bigint(11)")
+  private Long aclModuleId;
 
  /**
   * 请求的url, 可以填正则表达式【varchar(100)】

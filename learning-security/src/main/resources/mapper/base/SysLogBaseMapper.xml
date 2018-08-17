@@ -65,15 +65,15 @@
     <update id='update' parameterType='java.util.Map'>
         update sys_log
         <set>
-            <if test='id != null'>id = #{id},</if>
-            <if test='type != null'>type = #{type},</if>
-            <if test='targetId != null'>target_id = #{targetId},</if>
-            <if test='oldValue != null'>old_value = #{oldValue},</if>
-            <if test='newValue != null'>new_value = #{newValue},</if>
-            <if test='operator != null'>operator = #{operator},</if>
-            <if test='operateTime != null'>operate_time = #{operateTime},</if>
-            <if test='operateIp != null'>operate_ip = #{operateIp},</if>
-            <if test='status != null'>status = #{status},</if>
+            <if test='id'>id = #{id},</if>
+            <if test='type'>type = #{type},</if>
+            <if test='targetId'>target_id = #{targetId},</if>
+            <if test='oldValue'>old_value = #{oldValue},</if>
+            <if test='newValue'>new_value = #{newValue},</if>
+            <if test='operator'>operator = #{operator},</if>
+            <if test='operateTime'>operate_time = #{operateTime},</if>
+            <if test='operateIp'>operate_ip = #{operateIp},</if>
+            <if test='status'>status = #{status},</if>
         </set>
         where id = #{id}
     </update>
@@ -89,6 +89,5 @@
         <if test='operateIp != null'>and operate_ip = #{operateIp}</if>
         <if test='status != null'>and status = #{status}</if>
     </sql>
-
 
 </mapper>

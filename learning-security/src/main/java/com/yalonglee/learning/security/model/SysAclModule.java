@@ -29,10 +29,10 @@ public class SysAclModule implements Serializable {
   private String name;
 
  /**
-  * 上级权限模块id【int(11)】
+  * 上级权限模块id【bigint(11)】
   */
-  @ApiModelProperty(value = "上级权限模块id", dataType = "int(11)")
-  private Integer parentId;
+  @ApiModelProperty(value = "上级权限模块id", dataType = "bigint(11)")
+  private Long parentId;
 
  /**
   * 权限模块层级【varchar(200)】

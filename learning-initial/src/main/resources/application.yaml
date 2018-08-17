@@ -5,7 +5,7 @@ logging:
     root: INFO
     sample:
       mybatis:
-        mapper: TRACE
+        mapper: DEBUG
 
 #jwt相关配置
 jwt:

@@ -29,10 +29,10 @@ public class SysLog implements Serializable {
   private Integer type;
 
  /**
-  * 基于type后指定的对象id，比如用户、权限、角色等表的主键【int(11)】
+  * 基于type后指定的对象id，比如用户、权限、角色等表的主键【bigint(11)】
   */
-  @ApiModelProperty(value = "基于type后指定的对象id，比如用户、权限、角色等表的主键", dataType = "int(11)")
-  private Integer targetId;
+  @ApiModelProperty(value = "基于type后指定的对象id，比如用户、权限、角色等表的主键", dataType = "bigint(11)")
+  private Long targetId;
 
  /**
   * 旧值【text】

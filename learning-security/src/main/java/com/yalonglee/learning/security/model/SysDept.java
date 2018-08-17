@@ -29,10 +29,10 @@ public class SysDept implements Serializable {
   private String name;
 
  /**
-  * 上级部门id【int(11)】
+  * 上级部门id【bigint(11)】
   */
-  @ApiModelProperty(value = "上级部门id", dataType = "int(11)")
-  private Integer parentId;
+  @ApiModelProperty(value = "上级部门id", dataType = "bigint(11)")
+  private Long parentId;
 
  /**
   * 部门层级【varchar(200)】

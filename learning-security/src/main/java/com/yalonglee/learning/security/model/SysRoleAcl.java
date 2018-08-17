@@ -23,16 +23,16 @@ public class SysRoleAcl implements Serializable {
   private Long id;
 
  /**
-  * 角色id【int(11)】
+  * 角色id【bigint(11)】
   */
-  @ApiModelProperty(value = "角色id", dataType = "int(11)")
-  private Integer roleId;
+  @ApiModelProperty(value = "角色id", dataType = "bigint(11)")
+  private Long roleId;
 
  /**
-  * 权限id【int(11)】
+  * 权限id【bigint(11)】
   */
-  @ApiModelProperty(value = "权限id", dataType = "int(11)")
-  private Integer aclId;
+  @ApiModelProperty(value = "权限id", dataType = "bigint(11)")
+  private Long aclId;
 
  /**
   * 操作者【varchar(20)】

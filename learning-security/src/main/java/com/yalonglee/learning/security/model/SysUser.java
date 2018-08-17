@@ -47,10 +47,10 @@ public class SysUser implements Serializable {
   private String password;
 
  /**
-  * 用户所在部门的id【int(11)】
+  * 用户所在部门的id【bigint(11)】
   */
-  @ApiModelProperty(value = "用户所在部门的id", dataType = "int(11)")
-  private Integer deptId;
+  @ApiModelProperty(value = "用户所在部门的id", dataType = "bigint(11)")
+  private Long deptId;
 
  /**
   * 状态，1：正常，0：冻结状态，2：删除【int(11)】

@@ -23,16 +23,16 @@ public class SysRoleUser implements Serializable {
   private Long id;
 
  /**
-  * 角色id【int(11)】
+  * 角色id【bigint(11)】
   */
-  @ApiModelProperty(value = "角色id", dataType = "int(11)")
-  private Integer roleId;
+  @ApiModelProperty(value = "角色id", dataType = "bigint(11)")
+  private Long roleId;
 
  /**
-  * 用户id【int(11)】
+  * 用户id【bigint(11)】
   */
-  @ApiModelProperty(value = "用户id", dataType = "int(11)")
-  private Integer userId;
+  @ApiModelProperty(value = "用户id", dataType = "bigint(11)")
+  private Long userId;
 
  /**
   * 操作者【varchar(20)】
