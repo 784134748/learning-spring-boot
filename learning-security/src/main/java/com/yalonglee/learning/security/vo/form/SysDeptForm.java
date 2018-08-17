@@ -13,8 +13,8 @@ import java.io.Serializable;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel(value = "DeptForm", description = "部门Form表单")
-public class DeptForm implements Serializable {
+@ApiModel(value = "SysDeptForm", description = "部门Form表单")
+public class SysDeptForm implements Serializable {
 
     public static final long serialVersionUID = 1L;
 

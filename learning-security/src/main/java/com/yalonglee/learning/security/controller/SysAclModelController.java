@@ -1,8 +1,10 @@
 package com.yalonglee.learning.security.controller;
 
-import com.yalonglee.learning.security.vo.form.AclModelForm;
+import com.yalonglee.learning.security.service.SysAclModuleService;
+import com.yalonglee.learning.security.vo.form.SysAclModuleForm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,9 +13,12 @@ import org.springframework.web.bind.annotation.*;
 @Api(tags = "权限模块相关接口")
 public class SysAclModelController {
 
+    @Autowired
+    private SysAclModuleService sysAclModuleService;
+
     @ApiOperation(value = "新增权限模块")
     @PostMapping("/acl_model")
-    public ResponseEntity<?> saveAclModel(@RequestBody AclModelForm aclModelForm) {
+    public ResponseEntity<?> saveAclModel(@RequestBody SysAclModuleForm sysAclModuleForm) {
         return ResponseEntity.ok(null);
     }
 
@@ -25,7 +30,7 @@ public class SysAclModelController {
 
     @ApiOperation(value = "更新权限模块")
     @PutMapping("/acl_model/{acl_model_id}")
-    public ResponseEntity<?> updateAclModelById(@PathVariable("acl_model_id") Long aclModelId, @RequestBody AclModelForm aclModelForm) {
+    public ResponseEntity<?> updateAclModelById(@PathVariable("acl_model_id") Long aclModelId, @RequestBody SysAclModuleForm sysAclModuleForm) {
         return ResponseEntity.ok(null);
     }
 
@@ -43,7 +48,7 @@ public class SysAclModelController {
 
     @ApiOperation(value = "获取权限模块树")
     @GetMapping("/acl_model/tree")
-    public ResponseEntity<?> getAclModelTree(){
+    public ResponseEntity<?> getAclModelTree() {
         return ResponseEntity.ok(null);
     }
 

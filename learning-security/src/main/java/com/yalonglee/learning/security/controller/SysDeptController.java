@@ -1,8 +1,10 @@
 package com.yalonglee.learning.security.controller;
 
-import com.yalonglee.learning.security.vo.form.DeptForm;
+import com.yalonglee.learning.security.service.SysDeptService;
+import com.yalonglee.learning.security.vo.form.SysDeptForm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,9 +13,12 @@ import org.springframework.web.bind.annotation.*;
 @Api(tags = "部门相关接口")
 public class SysDeptController {
 
+    @Autowired
+    private SysDeptService sysDeptService;
+
     @ApiOperation(value = "新增部门")
     @PostMapping("/dept")
-    public ResponseEntity<?> saveDept(@RequestBody DeptForm deptForm) {
+    public ResponseEntity<?> saveDept(@RequestBody SysDeptForm sysDeptForm) {
         return ResponseEntity.ok(null);
     }
 
@@ -25,7 +30,7 @@ public class SysDeptController {
 
     @ApiOperation(value = "更新部门")
     @PutMapping("/dept/{dept_id}")
-    public ResponseEntity<?> updateDeptById(@PathVariable("dept_id") Long deptId, @RequestBody DeptForm deptForm) {
+    public ResponseEntity<?> updateDeptById(@PathVariable("dept_id") Long deptId, @RequestBody SysDeptForm sysDeptForm) {
         return ResponseEntity.ok(null);
     }
 

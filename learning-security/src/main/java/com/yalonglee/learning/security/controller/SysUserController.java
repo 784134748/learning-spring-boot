@@ -1,8 +1,10 @@
 package com.yalonglee.learning.security.controller;
 
-import com.yalonglee.learning.security.vo.form.UserForm;
+import com.yalonglee.learning.security.service.SysUserService;
+import com.yalonglee.learning.security.vo.form.SysUserForm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,9 +13,12 @@ import org.springframework.web.bind.annotation.*;
 @Api(tags = "用户相关接口")
 public class SysUserController {
 
+    @Autowired
+    private SysUserService sysUserService;
+
     @ApiOperation(value = "新增角色")
     @PostMapping("/user")
-    public ResponseEntity<?> saveUser(@RequestBody UserForm userForm) {
+    public ResponseEntity<?> saveUser(@RequestBody SysUserForm sysUserForm) {
         return ResponseEntity.ok(null);
     }
 
@@ -25,7 +30,7 @@ public class SysUserController {
 
     @ApiOperation(value = "更新角色")
     @PutMapping("/user/{user_id}")
-    public ResponseEntity<?> updateUserById(@PathVariable("user_id") Long userId, @RequestBody UserForm userForm) {
+    public ResponseEntity<?> updateUserById(@PathVariable("user_id") Long userId, @RequestBody SysUserForm sysUserForm) {
         return ResponseEntity.ok(null);
     }
 

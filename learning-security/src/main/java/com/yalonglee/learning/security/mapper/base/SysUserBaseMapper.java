@@ -12,12 +12,12 @@ public interface SysUserBaseMapper {
 
     List<SysUser> selectByQuery(Map<String, Object> param);
 
-    void deleteByPrimaryKey(@Param("id") Long id);
+    Integer deleteByPrimaryKey(@Param("id") Long id);
 
     Integer count(Map<String, Object> param);
 
     Long insert(Map<String, Object> param);
 
-    void update(Map<String, Object> param);
+    Integer update(Map<String, Object> param);
 
 }

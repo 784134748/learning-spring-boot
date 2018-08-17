@@ -15,8 +15,8 @@ import java.io.Serializable;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel(value = "AclModelForm", description = "权限模块Form表单")
-public class AclModelForm implements Serializable {
+@ApiModel(value = "SysAclModuleForm", description = "权限模块Form表单")
+public class SysAclModuleForm implements Serializable {
 
     public static final long serialVersionUID = 1L;
 

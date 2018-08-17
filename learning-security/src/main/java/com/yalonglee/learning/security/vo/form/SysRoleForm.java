@@ -15,8 +15,8 @@ import java.io.Serializable;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel(value = "RoleForm", description = "角色Form表单")
-public class RoleForm implements Serializable {
+@ApiModel(value = "SysRoleForm", description = "角色Form表单")
+public class SysRoleForm implements Serializable {
 
     public static final long serialVersionUID = 1L;
 

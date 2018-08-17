@@ -1,8 +1,7 @@
 package com.yalonglee.learning.security.controller;
 
-import com.yalonglee.learning.security.model.SysAcl;
 import com.yalonglee.learning.security.service.SysAclService;
-import com.yalonglee.learning.security.vo.form.AclForm;
+import com.yalonglee.learning.security.vo.form.SysAclForm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,7 @@ public class SysAclController {
 
     @ApiOperation(value = "新增权限")
     @PostMapping("/acl")
-    public ResponseEntity<?> saveAcl(@RequestBody AclForm aclForm) {
+    public ResponseEntity<?> saveAcl(@RequestBody SysAclForm sysAclForm) {
         return ResponseEntity.ok(null);
     }
 
@@ -31,7 +30,7 @@ public class SysAclController {
 
     @ApiOperation(value = "更新权限")
     @PutMapping("/acl/{acl_id}")
-    public ResponseEntity<?> updateAclById(@PathVariable("acl_id") Long aclId, @RequestBody AclForm aclForm) {
+    public ResponseEntity<?> updateAclById(@PathVariable("acl_id") Long aclId, @RequestBody SysAclForm sysAclForm) {
         return ResponseEntity.ok(null);
     }
 
@@ -44,19 +43,18 @@ public class SysAclController {
     @ApiOperation(value = "权限详情")
     @GetMapping("/acl/{acl_id}")
     public ResponseEntity<?> getAclById(@PathVariable("acl_id") Long aclId) {
-        SysAcl sysAcl = sysAclService.selectByPrimaryKey(aclId);
-        return ResponseEntity.ok(sysAcl);
+        return ResponseEntity.ok(null);
     }
 
     @ApiOperation(value = "当前权限被哪些用户所拥有")
     @GetMapping("/acl/{acl_id}/user/list")
-    public ResponseEntity<?> getUserListByAclId(@PathVariable("acl_id") Long aclId){
+    public ResponseEntity<?> getUserListByAclId(@PathVariable("acl_id") Long aclId) {
         return ResponseEntity.ok(null);
     }
 
     @ApiOperation(value = "当前权限被哪些角色所拥有")
     @GetMapping("/acl/{acl_id}/role/list")
-    public ResponseEntity<?> getRoleListByAclId(@PathVariable("acl_id") Long aclId){
+    public ResponseEntity<?> getRoleListByAclId(@PathVariable("acl_id") Long aclId) {
         return ResponseEntity.ok(null);
     }
 

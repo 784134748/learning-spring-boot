@@ -1,8 +1,10 @@
 package com.yalonglee.learning.security.controller;
 
-import com.yalonglee.learning.security.vo.form.RoleForm;
+import com.yalonglee.learning.security.service.SysRoleService;
+import com.yalonglee.learning.security.vo.form.SysRoleForm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,9 +13,12 @@ import org.springframework.web.bind.annotation.*;
 @Api(tags = "角色相关接口")
 public class SysRoleController {
 
+    @Autowired
+    private SysRoleService sysRoleService;
+
     @ApiOperation(value = "新增角色")
     @PostMapping("/role")
-    public ResponseEntity<?> saveRole(@RequestBody RoleForm roleForm) {
+    public ResponseEntity<?> saveRole(@RequestBody SysRoleForm sysRoleForm) {
         return ResponseEntity.ok(null);
     }
 
@@ -25,7 +30,7 @@ public class SysRoleController {
 
     @ApiOperation(value = "更新角色")
     @PutMapping("/role/{role_id}")
-    public ResponseEntity<?> updateRoleById(@PathVariable("role_id") Long roleId, @RequestBody RoleForm roleForm) {
+    public ResponseEntity<?> updateRoleById(@PathVariable("role_id") Long roleId, @RequestBody SysRoleForm sysRoleForm) {
         return ResponseEntity.ok(null);
     }
 
