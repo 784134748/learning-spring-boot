@@ -1,7 +1,13 @@
 package com.yalonglee.learning.core.common;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.http.HttpStatus;
 
+@Builder
+@Setter
+@Getter
 public class Result<T> {
 
     /**
@@ -24,11 +30,17 @@ public class Result<T> {
      */
     private T entry;
 
+    /**
+     * 查询数据总量
+     */
+    private Long total;
+
     @SuppressWarnings("unchecked")
     public static Result success(HttpStatus httpStatus) {
-        Result result = new Result();
-        result.responseCode = httpStatus.value();
-        result.setStatus(true);
+        Result result = Result.builder()
+                .status(true)
+                .responseCode(httpStatus.value())
+                .build();
         switch (httpStatus) {
             case OK:
                 result.setMessage("操作成功!");
@@ -54,6 +66,9 @@ public class Result<T> {
             case BAD_REQUEST:
                 result.setMessage("参数异常!");
                 break;
+            default:
+                result.setMessage("");
+                break;
 
         }
         return result;
@@ -61,40 +76,9 @@ public class Result<T> {
 
     @SuppressWarnings("unchecked")
     public static Result fail() {
-        Result result = new Result();
-        result.setStatus(false);
-        return result;
+        return Result.builder()
+                .status(false)
+                .build();
     }
 
-    public boolean isStatus() {
-        return status;
-    }
-
-    public void setStatus(boolean status) {
-        this.status = status;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public int getResponseCode() {
-        return responseCode;
-    }
-
-    public void setResponseCode(int responseCode) {
-        this.responseCode = responseCode;
-    }
-
-    public T getEntry() {
-        return entry;
-    }
-
-    public void setEntry(T entry) {
-        this.entry = entry;
-    }
 }
