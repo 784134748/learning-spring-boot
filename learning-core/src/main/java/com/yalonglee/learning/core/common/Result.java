@@ -1,13 +1,13 @@
 package com.yalonglee.learning.core.common;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.http.HttpStatus;
 
 @Builder
 @Setter
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Result<T> {
 
     /**
@@ -34,6 +34,25 @@ public class Result<T> {
      * 查询数据总量
      */
     private Long total;
+
+
+    @SuppressWarnings("unchecked")
+    public static Result success() {
+        return Result.builder()
+                .responseCode(200)
+                .status(true)
+                .build();
+    }
+
+
+    @SuppressWarnings("unchecked")
+    public static Result success(String message) {
+        return Result.builder()
+                .responseCode(200)
+                .status(true)
+                .message(message)
+                .build();
+    }
 
     @SuppressWarnings("unchecked")
     public static Result success(HttpStatus httpStatus) {
@@ -78,6 +97,16 @@ public class Result<T> {
     public static Result fail() {
         return Result.builder()
                 .status(false)
+                .responseCode(-1)
+                .build();
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Result fail(String message) {
+        return Result.builder()
+                .status(false)
+                .responseCode(-1)
+                .message(message)
                 .build();
     }
 
