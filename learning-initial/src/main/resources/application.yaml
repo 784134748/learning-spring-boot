@@ -5,6 +5,12 @@ logging:
     sample:
       mybatis:
         mapper: DEBUG
+    com:
+      yalonglee:
+        learning:
+          #打印SQL
+          security:
+            mapper: DEBUG
 
 #jwt相关配置
 jwt:
