@@ -13,6 +13,7 @@
         <module>learning-core</module>
         <module>learning-security</module>
         <module>learning-test</module>
+        <module>learning-groovy</module>
     </modules>
 
     <name>learning-spring-boot</name>

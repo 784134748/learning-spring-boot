@@ -1,4 +1,4 @@
-package com.yalonglee.learning.core.groovy.Model;
+package com.yalonglee.learning.groovy.model;
 
 /**
  * @author shaoshuai

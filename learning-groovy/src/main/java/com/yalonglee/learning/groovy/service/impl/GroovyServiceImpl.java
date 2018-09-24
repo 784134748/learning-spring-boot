@@ -1,9 +1,9 @@
-package com.yalonglee.learning.core.groovy.impl;
+package com.yalonglee.learning.groovy.service.impl;
 
 import com.yalonglee.learning.core.common.Result;
-import com.yalonglee.learning.core.groovy.GroovyExecService;
-import com.yalonglee.learning.core.groovy.GroovyService;
-import com.yalonglee.learning.core.groovy.Model.GroovyModel;
+import com.yalonglee.learning.groovy.service.GroovyExecService;
+import com.yalonglee.learning.groovy.service.GroovyService;
+import com.yalonglee.learning.groovy.model.GroovyModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

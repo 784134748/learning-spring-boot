@@ -1,6 +1,6 @@
-package com.yalonglee.learning.core.groovy;
+package com.yalonglee.learning.groovy.service;
 
-import com.yalonglee.learning.core.groovy.Model.GroovyModel;
+import com.yalonglee.learning.groovy.model.GroovyModel;
 
 import javax.script.Invocable;
 import java.util.Map;

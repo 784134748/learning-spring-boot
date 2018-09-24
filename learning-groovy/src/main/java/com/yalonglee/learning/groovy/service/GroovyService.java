@@ -1,7 +1,7 @@
-package com.yalonglee.learning.core.groovy;
+package com.yalonglee.learning.groovy.service;
 
 import com.yalonglee.learning.core.common.Result;
-import com.yalonglee.learning.core.groovy.Model.GroovyModel;
+import com.yalonglee.learning.groovy.model.GroovyModel;
 import org.springframework.stereotype.Service;
 
 import javax.script.Invocable;

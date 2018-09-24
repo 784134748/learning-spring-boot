@@ -51,6 +51,11 @@
         <!--引入子模块-->
         <dependency>
             <groupId>com.yalonglee</groupId>
+            <artifactId>learning-groovy</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.yalonglee</groupId>
             <artifactId>learning-security</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
