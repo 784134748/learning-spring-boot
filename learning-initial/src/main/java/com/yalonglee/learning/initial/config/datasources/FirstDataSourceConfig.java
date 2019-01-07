@@ -69,6 +69,11 @@ public class FirstDataSourceConfig {
         return template;
     }
 
+    /**
+     * 动态切换数据源
+     * @param firstDataSource
+     * @return
+     */
     @Bean
     public MyDataSource dataSource(DataSource firstDataSource) {
         Map<Object, Object> targetDataSources = Maps.newHashMap();
