@@ -1,0 +1,25 @@
+#服务端口号
+server:
+  port: 8080
+  servlet:
+    path: /
+    context-path: /learning
+
+#服务请求路径
+
+#jwt相关配置
+jwt:
+  header: Authorization
+  secret: mySecret
+  expiration: 604800
+  route:
+    authentication:
+      path: /auth/token
+      refresh: /auth/token/refresh
+
+#datasource
+first:
+  datasource:
+    url: jdbc:mysql://106.14.15.55:3306/test1?useAffectedRows=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
+    username: root
+    password: 123456
