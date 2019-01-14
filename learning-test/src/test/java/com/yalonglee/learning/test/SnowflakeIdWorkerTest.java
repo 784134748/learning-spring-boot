@@ -29,14 +29,23 @@ public class SnowflakeIdWorkerTest extends LearningTestApplicationTests {
     }
 
     /**
-     * 多线程是否会主键冲突
+     * 碰撞检测
      */
     @Test
     public void genIdTest() {
-        for (int i = 0; i < 10; i++) {
-            IdWorkThread t = new IdWorkThread(snowflakeIdWorker,set);
+        for (int i = 0; i < 1; i++) {
+            IdWorkThread t = new IdWorkThread(snowflakeIdWorker, set);
             t.start();
         }
+        //主程序循环，避免主程序退出，其他线程也随之关闭
+        while (true){
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
     /**
@@ -56,7 +65,11 @@ public class SnowflakeIdWorkerTest extends LearningTestApplicationTests {
         public void run() {
             while (true) {
                 long id = snowflakeId.genId();
-                log.info("{}", id);
+                //日志输出消耗极大（无日志4000/ms，有日志6/ms）
+                //log.info("{}", id);
+                if (set.size() > 4000) {
+                    set.clear();
+                }
                 if (!set.add(id)) {
                     log.info("duplicate:{}", id);
                 }
@@ -66,6 +79,7 @@ public class SnowflakeIdWorkerTest extends LearningTestApplicationTests {
 
     /**
      * 测试id的生成速度
+     *
      * @throws Exception
      */
     @Test
@@ -77,13 +91,15 @@ public class SnowflakeIdWorkerTest extends LearningTestApplicationTests {
 
     /**
      * 循环调用
+     *
      * @param idNum
      */
     private void loop(int idNum) {
         long start = System.currentTimeMillis();
         for (int i = 0; i < idNum; i++) {
             long id = snowflakeIdWorker.genId();
-            log.info("{}-{}", i, id);
+            //日志输出消耗极大（无日志4000/ms，有日志6/ms）
+            //log.info("{}{}", i, id);
         }
         long duration = System.currentTimeMillis() - start;
         log.info("total time: {}ms, speed is: {}/ms", duration, idNum / duration);
