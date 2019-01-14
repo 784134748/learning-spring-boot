@@ -31,15 +31,11 @@ public class SnowflakeIdWorker {
      */
     public SnowflakeIdWorker(long workerId) {
         if (workerId > IdMeta.MAX_ID || workerId < 0) {
-            throw new IllegalArgumentException(
+            throw new SnowflakeException(
                     String.format("worker id can't be greater than %d or less than 0", IdMeta.MAX_ID));
         }
         this.workerId = workerId;
-        log.info("worker starting. timestamp left shift {}, worker id bits {}, sequence bits {}, worker id {}",
-                IdMeta.TIMESTAMP_LEFT_SHIFT_BITS,
-                IdMeta.ID_BITS,
-                IdMeta.SEQUENCE_BITS,
-                workerId);
+        log.info("worker starting. timestamp left shift {}, worker id bits {}, sequence bits {}, worker id {}", IdMeta.TIMESTAMP_LEFT_SHIFT_BITS, IdMeta.ID_BITS, IdMeta.SEQUENCE_BITS, workerId);
     }
 
     /**
@@ -71,20 +67,24 @@ public class SnowflakeIdWorker {
                 | sequence;
     }
 
+    public ID expId(long id){
+        ID ret = new ID();
+        ret.setSequence(id & IdMeta.SEQUENCE_MASK);
+        ret.setWorker((id >>> IdMeta.SEQUENCE_BITS) & IdMeta.ID_MASK);
+        ret.setTimeStamp((id >>> IdMeta.TIMESTAMP_LEFT_SHIFT_BITS) & IdMeta.TIMESTAMP_MASK);
+        return ret;
+    }
+
     /**
-     * 如果当前时间戳小于上一次ID生成的时间戳，说明系统时钟被修改过，回退在上一次ID生成时间之前应当抛出异常！！！
+     * 如果当前时间戳小于上一次ID生成的时间戳，说明系统时钟被修改过，回退在上一次ID生成时间之前应当抛出异常 ！！！
      *
      * @param lastTimestamp 上一次ID生成的时间戳
      * @param timestamp     当前时间戳
      */
     private void validateTimestamp(long timestamp, long lastTimestamp) {
         if (timestamp < lastTimestamp) {
-            log.error(
-                    String.format("clock is moving backwards. Rejecting requests until %d.", lastTimestamp));
-            throw new IllegalStateException(
-                    String.format(
-                            "Clock moved backwards. Refusing to generate id for %d milliseconds",
-                            lastTimestamp - timestamp));
+            log.error("clock is moving backwards. Rejecting requests until {}.", lastTimestamp);
+            throw new SnowflakeException("Clock moved backwards. Refusing to generate id for {} milliseconds", lastTimestamp - timestamp);
         }
     }
 

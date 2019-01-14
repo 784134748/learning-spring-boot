@@ -13,13 +13,13 @@ public class IdMeta {
      */
     public static final long ID_BITS = 10L;
     /**
-     * 机器ID最大值1023 (此移位算法可很快计算出n位二进制数所能表示的最大十进制数)
-     */
-    public static final long MAX_ID = ~(-1L << ID_BITS);
-    /**
      * Sequence所占位数
      */
     public static final long SEQUENCE_BITS = 12L;
+    /**
+     * 机器ID最大值1023 (此移位算法可很快计算出n位二进制数所能表示的最大十进制数)
+     */
+    public static final long MAX_ID = ~(-1L << ID_BITS);
     /**
      * 机器ID偏移量12
      */

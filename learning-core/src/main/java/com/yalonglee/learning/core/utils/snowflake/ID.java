@@ -10,7 +10,6 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class ID implements Serializable {
 
   private static final long serialVersionUid = 1L;
