@@ -67,6 +67,11 @@ public class SnowflakeIdWorker {
                 | sequence;
     }
 
+    /**
+     * 解析id
+     * @param id
+     * @return
+     */
     public ID expId(long id){
         ID ret = new ID();
         ret.setSequence(id & IdMeta.SEQUENCE_MASK);
