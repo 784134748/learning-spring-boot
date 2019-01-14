@@ -2,9 +2,11 @@ package com.yalonglee.learning.core.utils.snowflake;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 @Slf4j
 @Data
+@Component
 public class SnowflakeIdWorker {
 
     /**
