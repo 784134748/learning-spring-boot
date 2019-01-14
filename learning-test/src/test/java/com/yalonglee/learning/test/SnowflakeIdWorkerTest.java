@@ -33,14 +33,17 @@ public class SnowflakeIdWorkerTest extends LearningTestApplicationTests {
      */
     @Test
     public void genIdTest() {
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 5; i++) {
             IdWorkThread t = new IdWorkThread(snowflakeIdWorker, set);
             t.start();
         }
         //主程序循环，避免主程序退出，其他线程也随之关闭
-        while (true){
+        long index = 0L;
+        while (index < 5) {
             try {
-                Thread.sleep(100);
+                Thread.sleep(1000);
+                index = index + 1;
+                System.out.println(index);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -67,7 +70,7 @@ public class SnowflakeIdWorkerTest extends LearningTestApplicationTests {
                 long id = snowflakeId.genId();
                 //日志输出消耗极大（无日志4000/ms，有日志6/ms）
                 //log.info("{}", id);
-                if (set.size() > 4000) {
+                if (set.size() > 10000) {
                     set.clear();
                 }
                 if (!set.add(id)) {
