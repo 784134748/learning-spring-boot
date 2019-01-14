@@ -16,5 +16,6 @@ import java.util.List;
 public class BatchDelete {
 
     @ApiModelProperty(value = "待删数据ID集合")
+    @Builder.Default
     List<Long> ids = Lists.newArrayList();
 }
