@@ -1,5 +1,5 @@
 /target/
-!.mvn/wrapper/maven-wrapper.jar
+!.mvn/
 
 ### STS ###
 .apt_generated
@@ -26,3 +26,4 @@
 
 ### MAC ###
 .DS_Store
+learning-payment/.mvn/wrapper/maven-wrapper.jar

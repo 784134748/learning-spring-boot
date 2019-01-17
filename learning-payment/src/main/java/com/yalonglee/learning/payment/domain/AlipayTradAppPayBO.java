@@ -1,4 +1,4 @@
-package com.yalonglee.learning.payment.bo;
+package com.yalonglee.learning.payment.domain;
 
 import com.alipay.api.domain.ExtUserInfo;
 import com.alipay.api.internal.mapping.ApiField;
@@ -13,7 +13,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AliPayTradAppPayBO implements Serializable {
+public class AlipayTradAppPayBO implements Serializable {
 
     private final static long serialVersionUid = 1L;
 
