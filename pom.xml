@@ -14,6 +14,7 @@
         <module>learning-security</module>
         <module>learning-test</module>
         <module>learning-groovy</module>
+        <module>learning-activemq</module>
     </modules>
 
     <name>learning-spring-boot</name>
