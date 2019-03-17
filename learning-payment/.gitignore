@@ -1,5 +1,5 @@
 /target/
-!.mvn/
+!.mvn/wrapper/maven-wrapper.jar
 
 ### STS ###
 .apt_generated
@@ -23,7 +23,3 @@
 /dist/
 /nbdist/
 /.nb-gradle/
-
-### MAC ###
-.DS_Store
-learning-payment/.mvn/wrapper/maven-wrapper.jar
