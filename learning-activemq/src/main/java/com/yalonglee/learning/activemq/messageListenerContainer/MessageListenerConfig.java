@@ -3,6 +3,7 @@ package com.yalonglee.learning.activemq.messageListenerContainer;
 import com.yalonglee.learning.activemq.consumer.PushConsumer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.RedeliveryPolicy;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -52,6 +53,16 @@ public class MessageListenerConfig {
     @Bean
     public ConnectionFactory connectionFactory() {
         ActiveMQConnectionFactory activeMQConnectionFactory = new ActiveMQConnectionFactory(brokerUrl);
+        //重写传送策略
+        RedeliveryPolicy policy = activeMQConnectionFactory.getRedeliveryPolicy();
+        //初始重发延迟时间
+        policy.setInitialRedeliveryDelay(5000);
+        //重连时间间隔递增倍数
+        policy.setBackOffMultiplier(2);
+        //启用指数递增的方式增加延时时间
+        policy.setUseExponentialBackOff(true);
+        //最大传送次数
+        policy.setMaximumRedeliveries(2);
 
         CachingConnectionFactory bean = new CachingConnectionFactory(activeMQConnectionFactory);
         bean.setSessionCacheSize(5);
@@ -71,7 +82,7 @@ public class MessageListenerConfig {
         listenerContainer.setAcceptMessagesWhileStopping(false);
         listenerContainer.setSessionTransacted(false);
         listenerContainer.setConcurrentConsumers(2);
-        listenerContainer.setMaxMessagesPerTask(1);
+        listenerContainer.setMaxMessagesPerTask(6);
         listenerContainer.setReceiveTimeout(5000);
         listenerContainer.setSessionAcknowledgeMode(Session.CLIENT_ACKNOWLEDGE);
         log.info("DefaultMessageListenerContainer for queue [{}] with message selector [{}] was started", listenerContainer.getDestination(), listenerContainer.getMessageSelector());

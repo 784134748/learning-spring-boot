@@ -8,6 +8,8 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
 import javax.jms.TextMessage;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Slf4j
 @Component
@@ -20,10 +22,10 @@ public class PushConsumer implements SessionAwareMessageListener<Message> {
             try {
                 double result = 0.5D;
                 if (Math.random() > result) {
-                    log.info("随机抛出异常" + textMessage.getText());
+                    log.info("当前时间：{}，随机抛出异常：{}", LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")), textMessage.getText());
                     throw new RuntimeException("随机抛出异常！");
                 }
-                log.info("消费消息：{}，消息已被签收！", textMessage.getText());
+                log.info("当前时间：{}，消费消息：{}，消息已被签收！", LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")), textMessage.getText());
                 message.acknowledge();
             } catch (Exception e) {
                 try {
