@@ -8,35 +8,36 @@ import java.util.List;
 
 public class BatchUpdate {
 
-    public static EnumMap<BatchUpdateOperation, Object> batchUpdate(ArrayList<BaseId> submit, ArrayList<BaseId> query) {
+    public static EnumMap<BatchUpdateOperation, Object> batchUpdate(List<BaseId> submitList, List<Fruit> queryList) {
 
-        ArrayList<BaseId> update = Lists.newArrayList();
-        ArrayList<BaseId> add = Lists.newArrayList();
+        List<BaseId> submit = Lists.newArrayList();
+        List<Fruit> query = Lists.newArrayList();
+
+        ArrayList<BaseId> batchUpdate = Lists.newArrayList();
+        ArrayList<BaseId> batchAdd = Lists.newArrayList();
 
         ArrayList<Long> submitIds = Lists.newArrayList();
         ArrayList<Long> queryIds = Lists.newArrayList();
-        ArrayList<Long> removeIds = Lists.newArrayList();
+        ArrayList<Long> batchRemoveIds = Lists.newArrayList();
 
 
         submit.stream().forEach(id -> {
             if (id.getId() == null) {
-                add.add(id);
+                batchAdd.add(id);
             }
             if (id.getId() != null && id.getId() > 0L) {
                 submitIds.add(id.getId());
-                update.add(id);
+                batchUpdate.add(id);
             }
         });
-        query.stream().forEach(id -> {
-            queryIds.add(id.getId());
-        });
+        query.stream().forEach(id -> queryIds.add(id.getId()));
         queryIds.removeAll(submitIds);
-        removeIds = queryIds;
+        batchRemoveIds = queryIds;
 
         EnumMap<BatchUpdateOperation, Object> enumMap = new EnumMap<>(BatchUpdateOperation.class);
-        enumMap.put(BatchUpdateOperation.ADD, add);
-        enumMap.put(BatchUpdateOperation.REMOVE, removeIds);
-        enumMap.put(BatchUpdateOperation.UPDATE, update);
+        enumMap.put(BatchUpdateOperation.ADD, batchAdd);
+        enumMap.put(BatchUpdateOperation.REMOVE, batchRemoveIds);
+        enumMap.put(BatchUpdateOperation.UPDATE, batchUpdate);
 
         return enumMap;
     }
@@ -48,7 +49,7 @@ public class BatchUpdate {
         submit.add(new Fruit(4L, "橘子"));
         submit.add(new Fruit(null, "橙子"));
 
-        ArrayList<BaseId> query = Lists.newArrayList();
+        ArrayList<Fruit> query = Lists.newArrayList();
         query.add(new Fruit(2L, "苹果"));
         query.add(new Fruit(3L, "香蕉"));
         query.add(new Fruit(4L, "橘子"));
@@ -59,13 +60,13 @@ public class BatchUpdate {
         List<Long> removeFruitList = (List<Long>) enumMap.get(BatchUpdateOperation.REMOVE);
         List<Fruit> addFruitList = (List<Fruit>) enumMap.get(BatchUpdateOperation.ADD);
 
-        System.out.println("新增:");
+        System.out.println("批量新增:");
         addFruitList.forEach(a -> System.out.print(a.toString()));
         System.out.println();
-        System.out.println("删除:");
+        System.out.println("批量删除:");
         removeFruitList.forEach(a -> System.out.print(a));
         System.out.println();
-        System.out.println("更新:");
+        System.out.println("批量更新:");
         updateFruitList.forEach(a -> System.out.print(a.toString()));
 
 
