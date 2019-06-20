@@ -16,6 +16,13 @@ public class AccountServiceImpl implements AccountService {
     private AccountMapper accountMapper;
 
     /**
+     * 以下是操作账户的一些原子化操作
+     * 开始转账前锁定账户
+     * 提现开始前锁定金额
+     * 提现结束后释放金额
+     */
+
+    /**
      * 开始转账前锁定账户
      *
      * @param accountAddr
@@ -80,6 +87,9 @@ public class AccountServiceImpl implements AccountService {
      * @param accountAddr
      */
     private AccountDTO lockedAccountAvailablePaymentAmount(String accountAddr, Double paymentAmount) {
+        //不锁表情况下判断账户余额是否满足支付条件
+        this.accountAvailablePaymentAmount(accountAddr, paymentAmount);
+        //锁表
         AccountDTO lockedAccount = getAccountLock(accountAddr);
         //检查账户可用余额
         checkAccountAvailableAmount(lockedAccount, paymentAmount, null);
@@ -94,7 +104,7 @@ public class AccountServiceImpl implements AccountService {
      */
     private AccountDTO accountAvailableWithdrawCashesAmount(String accountAddr, Double withDrawCashesAmount) {
         AccountDTO account = accountMapper.getAccountAmountByAccountAddr(accountAddr);
-        //检查账户可用余额
+        //检查账户可提现金额
         checkAccountAvailableAmount(account, null, withDrawCashesAmount);
         return account;
     }
@@ -105,8 +115,11 @@ public class AccountServiceImpl implements AccountService {
      * @param accountAddr
      */
     private AccountDTO lockedAccountAvailableWithdrawCashesAmount(String accountAddr, Double withDrawCashesAmount) {
+        //不锁表情况下判断账户余额是否满足提现条件
+        this.accountAvailableWithdrawCashesAmount(accountAddr, withDrawCashesAmount);
+        //锁表
         AccountDTO lockedAccount = getAccountLock(accountAddr);
-        //检查账户可用余额
+        //检查账户可提现金额
         checkAccountAvailableAmount(lockedAccount, null, withDrawCashesAmount);
         return lockedAccount;
     }
@@ -119,11 +132,11 @@ public class AccountServiceImpl implements AccountService {
      */
     private AccountDTO getAccountLock(String accountAddr) throws BizzRuntimeException {
         //获取记录锁（行锁）
-        AccountDTO account = accountMapper.getRecordLocks(accountAddr);
-        //通过时间戳限定锁所能操作的数据集的范围（数据集的创建时间必须小于设定的时间）
-        accountMapper.limitAccountRecordOperationScopeByTimestampLock(accountAddr);
+        AccountDTO account = accountMapper.getRecordLock(accountAddr);
         //检查账户
         checkAccountAvailableAmount(account, null, null);
+        //通过时间戳限定锁所能操作的数据集的范围（数据集的创建时间必须小于设定的时间）
+        accountMapper.limitAccountRecordOperationScopeByTimestampLock(accountAddr);
         return account;
     }
 
@@ -136,6 +149,9 @@ public class AccountServiceImpl implements AccountService {
     private void checkAccountAvailableAmount(AccountDTO account, Double paymentAmount, Double withDrawCashesAmount) {
         if (account == null) {
             throw new BizzRuntimeException("账户地址不存在");
+        }
+        if (account.getTimestampLock() > account.getCurrentTimestamp()) {
+            throw new BizzRuntimeException("数据库时间异常");
         }
         if (paymentAmount != null && account.getTotalAvailableAmount() < paymentAmount) {
             throw new BizzRuntimeException("当前账户可用余额不足");

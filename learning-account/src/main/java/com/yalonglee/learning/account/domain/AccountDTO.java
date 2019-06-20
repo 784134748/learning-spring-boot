@@ -23,10 +23,13 @@ public class AccountDTO {
     @ApiModelProperty(value = "账户地址", dataType = "String")
     private String accountAddr;
 
-    @ApiModelProperty(value = "账户总金额 = 账户可用金额 + 账户冻结金额 + 待提现金额，单位：分", dataType = "Double")
+    @ApiModelProperty(value = "账户总金额 = 账户可用金额 + 账户冻结金额，单位：分", dataType = "Double")
     private Double totalAmount;
 
-    @ApiModelProperty(value = "账户可用金额，单位：分", dataType = "Double")
+    @ApiModelProperty(value = "向用户展示的金额(账户可用金额 - 待提现金额)，单位：分", dataType = "Double")
+    private Double Amount;
+
+    @ApiModelProperty(value = "账户可用金额(包含待提现金额)，单位：分", dataType = "Double")
     private Double totalAvailableAmount;
 
     @ApiModelProperty(value = "账户冻结金额，单位：分", dataType = "Double")
@@ -35,12 +38,17 @@ public class AccountDTO {
     @ApiModelProperty(value = "待提现金额，单位：分", dataType = "Double")
     private Double waitWithDrawCashesAmount;
 
-    @ApiModelProperty(value = "时间锁", dataType = "java.time.LocalDateTime")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private java.time.LocalDateTime timestampLock;
+    @ApiModelProperty(value = "该记录上一次获取行锁的时间戳", dataType = "Long")
+    private Long timestampLock;
 
-    @ApiModelProperty(value = "数据加盐后的md5", dataType = "String")
-    private String mdfive;
+    @ApiModelProperty(value = "数据库当前时间戳", dataType = "Long")
+    private Long currentTimestamp;
 
+    public Double getTotalAmount() {
+        return totalAvailableAmount + totalFrozenAmount;
+    }
+
+    public Double getAmount() {
+        return totalAvailableAmount - waitWithDrawCashesAmount;
+    }
 }
