@@ -1,0 +1,129 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE mapper PUBLIC '-//mybatis.org//DTD Mapper 3.0//EN' 'http://mybatis.org/dtd/mybatis-3-mapper.dtd' >
+<mapper namespace='com.yalonglee.learning.account.mapper.AccountMapper'>
+
+    <!--一串华丽的分割线,分割线内禁止任何形式的修改-->
+
+    <resultMap id='BaseResultMap' type='com.yalonglee.learning.account.model.AccountModel'>
+        <constructor>
+            <idArg column='id' javaType='java.lang.Long'/>
+            <arg column='account_addr' javaType='java.lang.String'/>
+            <arg column='timestamp_lock' javaType='java.lang.Integer'/>
+            <arg column='wait_withdraw_cashes_amount' javaType='java.lang.Double'/>
+            <arg column='gmt_create' javaType='java.time.LocalDateTime'/>
+            <arg column='gmt_modified' javaType='java.time.LocalDateTime'/>
+        </constructor>
+        <result property='id' column='id'/>
+        <result property='accountAddr' column='account_addr'/>
+        <result property='timestampLock' column='timestamp_lock'/>
+        <result property='waitWithdrawCashesAmount' column='wait_withdraw_cashes_amount'/>
+        <result property='gmtCreate' column='gmt_create'/>
+        <result property='gmtModified' column='gmt_modified'/>
+    </resultMap>
+
+    <sql id='Base_Column_List'>
+    account.`id`, account.`account_addr`, account.`timestamp_lock`, account.`wait_withdraw_cashes_amount`, account.`gmt_create`, account.`gmt_modified`
+    </sql>
+
+    <select id='selectByPrimaryKey' resultMap='BaseResultMap'
+            parameterType='java.lang.Long'>
+        select 
+        <include refid='Base_Column_List'/>
+        from account 
+        where account.`id` = #{id}
+    </select>
+
+    <select id='selectOneByQuery' resultMap='BaseResultMap'
+            parameterType='com.yalonglee.learning.account.model.AccountModel'>
+        select 
+        <include refid='Base_Column_List'/>
+        from account 
+        <where>
+            <include refid='query_filter'/>
+        </where>
+        Limit 1
+    </select>
+
+    <select id='selectByQuery' resultMap='BaseResultMap'>
+        select 
+        <include refid='Base_Column_List'/>
+        from account 
+        <where>
+            <include refid='query_filter'/>
+        </where>
+        <if test='start != null and end != null'>
+            limit #{start}, #{end}
+        </if>
+    </select>
+
+    <delete id='deleteByPrimaryKey' parameterType='java.lang.Long'>
+        delete from account where account.`id` = #{id}
+    </delete>
+    <delete id='deleteByQuery' parameterType='com.yalonglee.learning.account.model.AccountModel'>
+        delete from account
+        <where>
+            <include refid='query_filter'/>
+        </where>
+    </delete>
+
+    <select id='count' resultType='java.lang.Integer' parameterType='com.yalonglee.learning.account.model.AccountModel'>
+        select count(*) from account
+        <where>
+            <include refid='query_filter'/>
+        </where>
+    </select>
+
+    <insert id='insert' parameterType='com.yalonglee.learning.account.model.AccountModel' useGeneratedKeys='true' keyProperty='id'>
+        insert into account
+        <trim prefix='(' suffix=')' suffixOverrides=','>
+            <if test='id != null'>account.`id`,</if>
+            <if test='accountAddr != null'>account.`account_addr`,</if>
+            <if test='timestampLock != null'>account.`timestamp_lock`,</if>
+            <if test='waitWithdrawCashesAmount != null'>account.`wait_withdraw_cashes_amount`,</if>
+            account.`gmt_create`,
+            account.`gmt_modified`,
+        </trim>
+        <trim prefix='values (' suffix=')' suffixOverrides=','>
+            <if test='id != null'>#{id},</if>
+            <if test='accountAddr != null'>#{accountAddr},</if>
+            <if test='timestampLock != null'>#{timestampLock},</if>
+            <if test='waitWithdrawCashesAmount != null'>#{waitWithdrawCashesAmount},</if>
+            now(),
+            now(),
+        </trim>
+    </insert>
+
+    <update id='fullUpdate' parameterType='com.yalonglee.learning.account.model.AccountModel'>
+        update account
+        <set>
+            account.`account_addr` = #{accountAddr},
+            account.`timestamp_lock` = #{timestampLock},
+            account.`wait_withdraw_cashes_amount` = #{waitWithdrawCashesAmount},
+            account.`gmt_modified` = now(),
+        </set>
+        where account.id = #{id}
+    </update>
+
+    <update id='incUpdate' parameterType='com.yalonglee.learning.account.model.AccountModel'>
+        update account
+        <set>
+            <if test='accountAddr != null'>account.`account_addr` = #{accountAddr},</if>
+            <if test='timestampLock != null'>account.`timestamp_lock` = #{timestampLock},</if>
+            <if test='waitWithdrawCashesAmount != null'>account.`wait_withdraw_cashes_amount` = #{waitWithdrawCashesAmount},</if>
+            account.`gmt_modified` = now(),
+        </set>
+        where account.`id` = #{id}
+    </update>
+
+    <sql id='query_filter'>
+        <if test='t.id != null'>and account.`id` = #{t.id}</if>
+        <if test='t.accountAddr != null'>and account.`account_addr` = #{t.accountAddr}</if>
+        <if test='t.timestampLock != null'>and account.`timestamp_lock` = #{t.timestampLock}</if>
+        <if test='t.waitWithdrawCashesAmount != null'>and account.`wait_withdraw_cashes_amount` = #{t.waitWithdrawCashesAmount}</if>
+        <if test='t.gmtCreate != null'>and account.`gmt_create` = #{t.gmtCreate}</if>
+        <if test='t.gmtModified != null'>and account.`gmt_modified` = #{t.gmtModified}</if>
+    </sql>
+
+    <!--一串华丽的分割线,分割线内禁止任何形式的修改-->
+
+</mapper>

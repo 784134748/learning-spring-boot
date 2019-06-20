@@ -17,6 +17,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Builder
 public class AccountDTO {
 
+    @ApiModelProperty(value = "账户id", dataType = "Long")
+    private Long id;
+
     @ApiModelProperty(value = "账户地址", dataType = "String")
     private String accountAddr;
 
@@ -30,7 +33,7 @@ public class AccountDTO {
     private Double totalFrozenAmount;
 
     @ApiModelProperty(value = "待提现金额，单位：分", dataType = "Double")
-    private Double waitWithDrawCashes;
+    private Double waitWithDrawCashesAmount;
 
     @ApiModelProperty(value = "时间锁", dataType = "java.time.LocalDateTime")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
