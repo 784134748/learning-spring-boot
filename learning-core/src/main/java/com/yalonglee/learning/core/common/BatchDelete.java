@@ -1,6 +1,7 @@
 package com.yalonglee.learning.core.common;
 
 import com.google.common.collect.Lists;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;

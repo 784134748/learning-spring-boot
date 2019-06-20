@@ -117,7 +117,7 @@ class Fruit extends BaseId {
 enum BatchUpdateOperation {
     REMOVE,
     ADD,
-    UPDATE;
+    UPDATE
 }
 
 
