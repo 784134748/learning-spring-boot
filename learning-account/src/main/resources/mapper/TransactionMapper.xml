@@ -1,0 +1,178 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE mapper PUBLIC '-//mybatis.org//DTD Mapper 3.0//EN' 'http://mybatis.org/dtd/mybatis-3-mapper.dtd' >
+<mapper namespace='com.yalonglee.learning.account.mapper.TransactionMapper'>
+
+    <!--一串华丽的分割线,分割线内禁止任何形式的修改-->
+
+    <resultMap id='BaseResultMap' type='com.yalonglee.learning.account.model.TransactionModel'>
+        <constructor>
+            <idArg column='id' javaType='java.lang.Long'/>
+            <arg column='serial_number' javaType='java.lang.String'/>
+            <arg column='target_id' javaType='java.lang.Long'/>
+            <arg column='transaction_from' javaType='java.lang.Integer'/>
+            <arg column='amount' javaType='java.lang.Double'/>
+            <arg column='is_anonymous' javaType='java.lang.Integer'/>
+            <arg column='transaction_type' javaType='java.lang.Integer'/>
+            <arg column='account_addr' javaType='java.lang.String'/>
+            <arg column='source_account_addr' javaType='java.lang.String'/>
+            <arg column='target_account_addr' javaType='java.lang.String'/>
+            <arg column='mdfive' javaType='java.lang.String'/>
+            <arg column='gmt_create' javaType='java.time.LocalDateTime'/>
+            <arg column='gmt_modified' javaType='java.time.LocalDateTime'/>
+        </constructor>
+        <result property='id' column='id'/>
+        <result property='serialNumber' column='serial_number'/>
+        <result property='targetId' column='target_id'/>
+        <result property='transactionFrom' column='transaction_from'/>
+        <result property='amount' column='amount'/>
+        <result property='anonymous' column='is_anonymous'/>
+        <result property='transactionType' column='transaction_type'/>
+        <result property='accountAddr' column='account_addr'/>
+        <result property='sourceAccountAddr' column='source_account_addr'/>
+        <result property='targetAccountAddr' column='target_account_addr'/>
+        <result property='mdfive' column='mdfive'/>
+        <result property='gmtCreate' column='gmt_create'/>
+        <result property='gmtModified' column='gmt_modified'/>
+    </resultMap>
+
+    <sql id='Base_Column_List'>
+    transaction.`id`, transaction.`serial_number`, transaction.`target_id`, transaction.`transaction_from`, transaction.`amount`, transaction.`is_anonymous`, transaction.`transaction_type`, transaction.`account_addr`, transaction.`source_account_addr`, transaction.`target_account_addr`, transaction.`mdfive`, transaction.`gmt_create`, transaction.`gmt_modified`
+    </sql>
+
+    <select id='selectByPrimaryKey' resultMap='BaseResultMap'
+            parameterType='java.lang.Long'>
+        select 
+        <include refid='Base_Column_List'/>
+        from transaction 
+        where transaction.`id` = #{id}
+    </select>
+
+    <select id='selectOneByQuery' resultMap='BaseResultMap'
+            parameterType='com.yalonglee.learning.account.model.TransactionModel'>
+        select 
+        <include refid='Base_Column_List'/>
+        from transaction 
+        <where>
+            <include refid='query_filter'/>
+        </where>
+        Limit 1
+    </select>
+
+    <select id='selectByQuery' resultMap='BaseResultMap'>
+        select 
+        <include refid='Base_Column_List'/>
+        from transaction 
+        <where>
+            <include refid='query_filter'/>
+        </where>
+        <if test='start != null and end != null'>
+            limit #{start}, #{end}
+        </if>
+    </select>
+
+    <delete id='deleteByPrimaryKey' parameterType='java.lang.Long'>
+        delete from transaction where transaction.`id` = #{id}
+    </delete>
+    <delete id='deleteByQuery' parameterType='com.yalonglee.learning.account.model.TransactionModel'>
+        delete from transaction
+        <where>
+            <include refid='query_filter'/>
+        </where>
+    </delete>
+
+    <select id='count' resultType='java.lang.Integer' parameterType='com.yalonglee.learning.account.model.TransactionModel'>
+        select count(*) from transaction
+        <where>
+            <include refid='query_filter'/>
+        </where>
+    </select>
+
+    <insert id='insert' parameterType='com.yalonglee.learning.account.model.TransactionModel' useGeneratedKeys='true' keyProperty='id'>
+        insert into transaction
+        <trim prefix='(' suffix=')' suffixOverrides=','>
+            <if test='id != null'>transaction.`id`,</if>
+            <if test='serialNumber != null'>transaction.`serial_number`,</if>
+            <if test='targetId != null'>transaction.`target_id`,</if>
+            <if test='transactionFrom != null'>transaction.`transaction_from`,</if>
+            <if test='amount != null'>transaction.`amount`,</if>
+            <if test='anonymous != null'>transaction.`is_anonymous`,</if>
+            <if test='transactionType != null'>transaction.`transaction_type`,</if>
+            <if test='accountAddr != null'>transaction.`account_addr`,</if>
+            <if test='sourceAccountAddr != null'>transaction.`source_account_addr`,</if>
+            <if test='targetAccountAddr != null'>transaction.`target_account_addr`,</if>
+            <if test='mdfive != null'>transaction.`mdfive`,</if>
+            transaction.`gmt_create`,
+            transaction.`gmt_modified`,
+        </trim>
+        <trim prefix='values (' suffix=')' suffixOverrides=','>
+            <if test='id != null'>#{id},</if>
+            <if test='serialNumber != null'>#{serialNumber},</if>
+            <if test='targetId != null'>#{targetId},</if>
+            <if test='transactionFrom != null'>#{transactionFrom},</if>
+            <if test='amount != null'>#{amount},</if>
+            <if test='anonymous != null'>#{anonymous},</if>
+            <if test='transactionType != null'>#{transactionType},</if>
+            <if test='accountAddr != null'>#{accountAddr},</if>
+            <if test='sourceAccountAddr != null'>#{sourceAccountAddr},</if>
+            <if test='targetAccountAddr != null'>#{targetAccountAddr},</if>
+            <if test='mdfive != null'>#{mdfive},</if>
+            now(),
+            now(),
+        </trim>
+    </insert>
+
+    <update id='fullUpdate' parameterType='com.yalonglee.learning.account.model.TransactionModel'>
+        update transaction
+        <set>
+            transaction.`serial_number` = #{serialNumber},
+            transaction.`target_id` = #{targetId},
+            transaction.`transaction_from` = #{transactionFrom},
+            transaction.`amount` = #{amount},
+            transaction.`is_anonymous` = #{anonymous},
+            transaction.`transaction_type` = #{transactionType},
+            transaction.`account_addr` = #{accountAddr},
+            transaction.`source_account_addr` = #{sourceAccountAddr},
+            transaction.`target_account_addr` = #{targetAccountAddr},
+            transaction.`mdfive` = #{mdfive},
+            transaction.`gmt_modified` = now(),
+        </set>
+        where transaction.id = #{id}
+    </update>
+
+    <update id='incUpdate' parameterType='com.yalonglee.learning.account.model.TransactionModel'>
+        update transaction
+        <set>
+            <if test='serialNumber != null'>transaction.`serial_number` = #{serialNumber},</if>
+            <if test='targetId != null'>transaction.`target_id` = #{targetId},</if>
+            <if test='transactionFrom != null'>transaction.`transaction_from` = #{transactionFrom},</if>
+            <if test='amount != null'>transaction.`amount` = #{amount},</if>
+            <if test='anonymous != null'>transaction.`is_anonymous` = #{anonymous},</if>
+            <if test='transactionType != null'>transaction.`transaction_type` = #{transactionType},</if>
+            <if test='accountAddr != null'>transaction.`account_addr` = #{accountAddr},</if>
+            <if test='sourceAccountAddr != null'>transaction.`source_account_addr` = #{sourceAccountAddr},</if>
+            <if test='targetAccountAddr != null'>transaction.`target_account_addr` = #{targetAccountAddr},</if>
+            <if test='mdfive != null'>transaction.`mdfive` = #{mdfive},</if>
+            transaction.`gmt_modified` = now(),
+        </set>
+        where transaction.`id` = #{id}
+    </update>
+
+    <sql id='query_filter'>
+        <if test='t.id != null'>and transaction.`id` = #{t.id}</if>
+        <if test='t.serialNumber != null'>and transaction.`serial_number` = #{t.serialNumber}</if>
+        <if test='t.targetId != null'>and transaction.`target_id` = #{t.targetId}</if>
+        <if test='t.transactionFrom != null'>and transaction.`transaction_from` = #{t.transactionFrom}</if>
+        <if test='t.amount != null'>and transaction.`amount` = #{t.amount}</if>
+        <if test='t.anonymous != null'>and transaction.`is_anonymous` = #{t.anonymous}</if>
+        <if test='t.transactionType != null'>and transaction.`transaction_type` = #{t.transactionType}</if>
+        <if test='t.accountAddr != null'>and transaction.`account_addr` = #{t.accountAddr}</if>
+        <if test='t.sourceAccountAddr != null'>and transaction.`source_account_addr` = #{t.sourceAccountAddr}</if>
+        <if test='t.targetAccountAddr != null'>and transaction.`target_account_addr` = #{t.targetAccountAddr}</if>
+        <if test='t.mdfive != null'>and transaction.`mdfive` = #{t.mdfive}</if>
+        <if test='t.gmtCreate != null'>and transaction.`gmt_create` = #{t.gmtCreate}</if>
+        <if test='t.gmtModified != null'>and transaction.`gmt_modified` = #{t.gmtModified}</if>
+    </sql>
+
+    <!--一串华丽的分割线,分割线内禁止任何形式的修改-->
+
+</mapper>

@@ -1,19 +1,13 @@
 package com.yalonglee.learning.account.domain;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * @author yalonglee
  */
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
 public class AccountDTO {
 
@@ -27,7 +21,7 @@ public class AccountDTO {
     private Double totalAmount;
 
     @ApiModelProperty(value = "向用户展示的金额(账户可用金额 - 待提现金额)，单位：分", dataType = "Double")
-    private Double Amount;
+    private Double amount;
 
     @ApiModelProperty(value = "账户可用金额(包含待提现金额)，单位：分", dataType = "Double")
     private Double totalAvailableAmount;
@@ -51,4 +45,5 @@ public class AccountDTO {
     public Double getAmount() {
         return totalAvailableAmount - waitWithDrawCashesAmount;
     }
+
 }
