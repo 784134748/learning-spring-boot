@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Getter
-public class TransferUitil {
+public class TransferUtil {
 
     /**
      * 创世货币来源账户和提现金额的入账账户默认为系统账户
@@ -72,24 +72,23 @@ public class TransferUitil {
     /**
      * 所有可用金额被耗尽的账户记录的ID（最后一条被消耗的账户记录除外）
      */
-    private List<Long> updateUseUpAccountRecordIds;
+    private List<Long> updateUseUpAccountRecordIds = Lists.newArrayList();
     /**
      * 新增的账户记录
      */
-    private List<AccountRecordInfo> insertNewAccountRecordInfoList;
+    private List<AccountRecordInfo> insertNewAccountRecordInfoList = Lists.newArrayList();
     /**
      * 新增的转账记录
      */
-    private List<TransferInfo> insertNewTransferInfoList;
+    private List<TransferInfo> insertNewTransferInfoList = Lists.newArrayList();
     /**
      * 新增的账户变更记录
      */
-    private List<AccountLogInfo> insertNewAccountLogInfoList;
+    private List<AccountLogInfo> insertNewAccountLogInfoList = Lists.newArrayList();
     /**
      * 雪花算法
      */
-    private SnowflakeIdWorker snowflakeIdWorker;
-
+    private SnowflakeIdWorker snowflakeIdWorker = new SnowflakeIdWorker();
     /**
      * 生成md5
      */
@@ -98,7 +97,7 @@ public class TransferUitil {
     }
 
     @Builder
-    public TransferUitil(String serialNumber, String sourceAccountAddr, Double totalTransferAmount, List<PaymentDTO> paymentDTOList, List<TransferTarget> transferTargetList) {
+    public TransferUtil(String serialNumber, String sourceAccountAddr, Double totalTransferAmount, List<PaymentDTO> paymentDTOList, List<TransferTarget> transferTargetList) {
         this.serialNumber = serialNumber;
         this.sourceAccountAddr = sourceAccountAddr;
         this.totalTransferAmount = totalTransferAmount;
@@ -112,11 +111,6 @@ public class TransferUitil {
      * @return
      */
     public EnumMap<TransferOperation, Object> transfer() {
-        this.updateUseUpAccountRecordIds = Lists.newArrayList();
-        this.insertNewAccountLogInfoList = Lists.newArrayList();
-        this.insertNewAccountRecordInfoList = Lists.newArrayList();
-        this.insertNewTransferInfoList = Lists.newArrayList();
-        this.snowflakeIdWorker = new SnowflakeIdWorker();
         this.checkParams();
         this.oneToManyTransfer();
 
@@ -134,6 +128,7 @@ public class TransferUitil {
      */
     private void checkParams() {
         final double zero = 0.00D;
+
         if (StringUtils.isBlank(this.serialNumber)) {
             throw new BizzRuntimeException("流水号不能为空");
         }
@@ -141,7 +136,7 @@ public class TransferUitil {
             throw new BizzRuntimeException("转账账户异常");
         }
         if (this.totalTransferAmount <= zero) {
-            throw new BizzRuntimeException("转账金额异常");
+            throw new BizzRuntimeException("转账金额必须大于0.00");
         }
         if (this.paymentDTOList == null || this.paymentDTOList.isEmpty()) {
             throw new BizzRuntimeException("未获取到任何可支付的账户记录");
@@ -149,6 +144,7 @@ public class TransferUitil {
         if (this.transferTargetList == null || this.transferTargetList.isEmpty()) {
             throw new BizzRuntimeException("未获取到任何入账账户地址");
         }
+
         //本次转账涉及到的账户记录进行升序排序
         this.paymentDTOList = this.paymentDTOList.stream()
                 .filter(paymentDTO -> paymentDTO.getSum() - paymentDTO.getAvailableAmount() < this.totalTransferAmount)
@@ -167,7 +163,7 @@ public class TransferUitil {
         //转账总金额
         final double total = this.totalTransferAmount;
         //累计已转账金额
-        double already = SYSTEM_DEFINE_AMOUNT_ZERO;
+        double already = TransferUtil.SYSTEM_DEFINE_AMOUNT_ZERO;
 
         //获取支付记录的迭代器
         Iterator<PaymentDTO> iterator = paymentDTOList.listIterator();
@@ -267,7 +263,7 @@ public class TransferUitil {
         //转账总金额
         final double total = target.getTotalTransferAmount();
         //累计已转账金额
-        double already = SYSTEM_DEFINE_AMOUNT_ZERO;
+        double already = TransferUtil.SYSTEM_DEFINE_AMOUNT_ZERO;
         //剩余待转金额
         double left = total - already;
         for (PaymentDTO payment : payments) {
@@ -283,8 +279,8 @@ public class TransferUitil {
             double leftAvailableAmount = payment.getAvailableAmount() - left;
             //支付消耗的金额
             double payAmount = payment.getAvailableAmount() - leftAvailableAmount;
-            if (leftAvailableAmount < SYSTEM_DEFINE_AMOUNT_ZERO) {
-                leftAvailableAmount = SYSTEM_DEFINE_AMOUNT_ZERO;
+            if (leftAvailableAmount < TransferUtil.SYSTEM_DEFINE_AMOUNT_ZERO) {
+                leftAvailableAmount = TransferUtil.SYSTEM_DEFINE_AMOUNT_ZERO;
             }
             //生成新的账户记录
             AccountRecordInfo newAccountRecordInfo = AccountRecordInfo.builder()
@@ -292,9 +288,9 @@ public class TransferUitil {
                     .serialNumber(serialNumber)
                     .fromAccountAddr(sourceAccountAddr)
                     .accountAddr(targetAccountAddr)
-                    .index(SYSTEM_INDEX)
+                    .index(TransferUtil.SYSTEM_INDEX)
                     .availableAmount(payment.getAvailableAmount() - leftAvailableAmount)
-                    .frozenAmount(SYSTEM_DEFINE_AMOUNT_ZERO)
+                    .frozenAmount(TransferUtil.SYSTEM_DEFINE_AMOUNT_ZERO)
                     .build();
             this.insertNewAccountRecordInfoList.add(newAccountRecordInfo);
             //生成账户变更记录(入账账户记录和出账账户记录各一条)
@@ -304,7 +300,7 @@ public class TransferUitil {
                     .fromAccountRecordId(fromAccountRecordId)
                     .fromAccountRecordIndex(fromAccountRecordIndex)
                     .accountRecordId(fromAccountRecordId)
-                    .accountRecordIndex(SYSTEM_INDEX)
+                    .accountRecordIndex(TransferUtil.SYSTEM_INDEX)
                     .accountAddr(sourceAccountAddr)
                     .accountRecordIndex(fromAccountRecordIndex + 1)
                     .availableAmount(leftAvailableAmount)
@@ -324,7 +320,7 @@ public class TransferUitil {
             this.insertNewAccountLogInfoList.add(newSourceAccountLogInfo);
             this.insertNewAccountLogInfoList.add(newTargetAccountLogInfo);
             //完成转账
-            if (leftAvailableAmount >= SYSTEM_DEFINE_AMOUNT_ZERO) {
+            if (leftAvailableAmount >= TransferUtil.SYSTEM_DEFINE_AMOUNT_ZERO) {
                 //生成转账记录(入账账户记录和出账账户记录各一条)
                 TransferInfo newSourceTransferInfo = TransferInfo.builder()
                         .id(this.snowflakeIdWorker.genId())
@@ -360,7 +356,7 @@ public class TransferUitil {
         List<TransferTarget> transferTargetList = Lists.newArrayList();
         transferTargetList.add(TransferTarget.builder().accountAddr("e").totalTransferAmount(3.00).build());
 
-        TransferUitil transferUitil = TransferUitil.builder()
+        TransferUtil transferUtil = TransferUtil.builder()
                 .serialNumber("1234567890")
                 .sourceAccountAddr("system_account_addr")
                 .totalTransferAmount(13.00)
@@ -368,7 +364,7 @@ public class TransferUitil {
                 .transferTargetList(transferTargetList)
                 .build();
 
-        transferUitil.transfer();
+        transferUtil.transfer();
     }
 
 }
