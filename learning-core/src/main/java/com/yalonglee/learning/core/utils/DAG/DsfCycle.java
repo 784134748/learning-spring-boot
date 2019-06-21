@@ -1,8 +1,12 @@
 package com.yalonglee.learning.core.utils.DAG;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 具体思想是：
@@ -30,6 +34,11 @@ public class DsfCycle {
     private static int[][] adjacencyMatrix = new int[MAX_NODE_COUNT][MAX_NODE_COUNT];
 
     /**
+     * link集合
+     */
+    private static Map<String, String> links = Maps.newHashMap();
+
+    /**
      * @param nodeName
      * @return
      * @Title addNode
@@ -49,6 +58,26 @@ public class DsfCycle {
     }
 
     /**
+     * @param startNodeName
+     * @param endNodeName
+     * @return
+     * @Title addLink
+     * @Description 添加节点
+     * @date 2018年5月17日
+     */
+    private static void addLink(String startNodeName, String endNodeName) {
+        final String sepa = ";";
+        if (endNodeName.contains(sepa)) {
+            System.out.println("nodeName not allow contain separation character [;]");
+        }
+        if (links.containsKey(startNodeName)) {
+            links.put(startNodeName, links.get(startNodeName) + sepa + endNodeName);
+            return;
+        }
+        links.put(startNodeName, endNodeName);
+    }
+
+    /**
      * @param startNode
      * @param endNode
      * @Title addLine
@@ -60,16 +89,17 @@ public class DsfCycle {
         int endIndex = addNode(endNode);
         if (startIndex >= 0 && endIndex >= 0) {
             adjacencyMatrix[startIndex][endIndex] = 1;
+            addLink(startNode, endNode);
         }
     }
 
     /**
      * @return
-     * @Title find
+     * @Title findCycle
      * @Description 寻找闭环
      * @date 2018年5月17日
      */
-    public static List<String> find() {
+    public static List<String> findCycle() {
         // 从出发节点到当前节点的轨迹
         List<Integer> trace = Lists.newArrayList();
         //返回值
@@ -120,9 +150,13 @@ public class DsfCycle {
         DsfCycle.addLine("D", "A");
         DsfCycle.addLine("D", "C");
         DsfCycle.addLine("D", "B");
-        List<String> result = DsfCycle.find();
+        List<String> result = DsfCycle.findCycle();
         for (String string : result) {
             System.out.println(string);
+        }
+        Iterator iterator = links.entrySet().iterator();
+        while (iterator.hasNext()) {
+            System.out.println(iterator.next());
         }
     }
 }
