@@ -189,7 +189,7 @@ public class AccountUtil {
      */
     private static EnumMap<AccountOperation, Object> oneToManyTransfer(String serialNumber, String sourceAccountAddr, Double totalTransferAmount, List<PaymentDTO> paymentDTOList, List<TransferTarget> transferTargetList) {
 
-        log.info("流水号：{},进入一对多转账的方法: 出账账户地址{} - 出账总金额{}", serialNumber, sourceAccountAddr, totalTransferAmount);
+        log.info("流水号：{},进入一对多转账的方法: 出账账户地址【{}】 - 出账总金额【{}】", serialNumber, sourceAccountAddr, totalTransferAmount);
 
         //转账总金额
         final double total = totalTransferAmount;
@@ -306,16 +306,16 @@ public class AccountUtil {
      * @param target            入账的账户以及金额
      */
     private static void oneToOneTransfer(String serialNumber, String sourceAccountAddr, List<PaymentDTO> payments, TransferTarget target, List<AccountRecordInfo> insertNewAccountRecordInfoList, List<TransferInfo> insertNewTransferInfoList, List<AccountLogInfo> insertNewAccountLogInfoList) {
-        log.info("流水号：{},进入顺序转账方法: 入账账户地址{} - 入账总金额{}", serialNumber, target.getAccountAddr(), target.getTotalTransferAmount());
+        log.info("流水号：{},进入顺序转账方法: 入账账户地址【{}】 - 入账总金额【{}】", serialNumber, target.getAccountAddr(), target.getTotalTransferAmount());
         //入账账户地址
         String targetAccountAddr = target.getAccountAddr();
         //转账总金额
         final double total = target.getTotalTransferAmount();
         //累计已转账金额
         double already = AccountUtil.SYSTEM_DEFINE_AMOUNT_ZERO;
-        //剩余待转金额
-        double left = total - already;
         for (PaymentDTO payment : payments) {
+            //剩余待转金额
+            double left = total - already;
             //来源账户记录id
             long fromAccountRecordId = payment.getAccountRecordId();
             //新产生账户记录的id
@@ -324,13 +324,17 @@ public class AccountUtil {
             int fromAccountRecordIndex = payment.getIndex();
             //冻结的金额
             double frozenAmount = payment.getFrozenAmount();
-            //剩余的金额
+            //支付记录剩余的可用金额
             double leftAvailableAmount = payment.getAvailableAmount() - left;
-            //支付消耗的金额
-            double payAmount = payment.getAvailableAmount() - leftAvailableAmount;
+            //支付记录可用金额被耗尽
             if (leftAvailableAmount < AccountUtil.SYSTEM_DEFINE_AMOUNT_ZERO) {
                 leftAvailableAmount = AccountUtil.SYSTEM_DEFINE_AMOUNT_ZERO;
             }
+            //支付记录消耗的金额
+            double payAvailableAmount = payment.getAvailableAmount() - leftAvailableAmount;
+            already += payAvailableAmount;
+
+            log.info("流水号：{},支付记录: 支付记录id【{}】 - 支付记录的可用金额【{}】 - 支付记录消耗的可用金额【{}】 - 支付记录剩余的可用金额【{}】", serialNumber, accountRecordId, payment.getAvailableAmount(), payAvailableAmount, leftAvailableAmount);
             //生成新的账户记录
             AccountRecordInfo newAccountRecordInfo = AccountRecordInfo.builder()
                     .id(accountRecordId)
@@ -363,7 +367,7 @@ public class AccountUtil {
                     .accountAddr(targetAccountAddr)
                     .accountRecordId(accountRecordId)
                     .accountRecordIndex(SYSTEM_INDEX)
-                    .availableAmount(payAmount)
+                    .availableAmount(payAvailableAmount)
                     .frozenAmount(frozenAmount)
                     .build();
             insertNewAccountLogInfoList.add(newSourceAccountLogInfo);
