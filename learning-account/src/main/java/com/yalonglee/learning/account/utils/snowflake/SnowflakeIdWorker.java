@@ -32,7 +32,7 @@ public class SnowflakeIdWorker implements InitializingBean {
     private long workerId;
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         //initialize worker id
         long workerIdLocal = 0L;
         if (workerId > IdMeta.MAX_ID || workerId < 0) {

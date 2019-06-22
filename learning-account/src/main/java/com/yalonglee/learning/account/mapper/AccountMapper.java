@@ -1,6 +1,6 @@
 package com.yalonglee.learning.account.mapper;
 
-import com.yalonglee.learning.account.domain.AccountDTO;
+import com.yalonglee.learning.account.utils.account.AccountDTO;
 import com.yalonglee.learning.account.mapper.base.AccountBaseMapper;
 import com.yalonglee.learning.account.model.AccountModel;
 import org.apache.ibatis.annotations.Param;

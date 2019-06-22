@@ -10,15 +10,15 @@ public class BatchUpdate {
 
     public static EnumMap<BatchUpdateOperation, Object> batchUpdate(List<BaseId> submitList, List<Fruit> queryList) {
 
-        List<BaseId> submit = Lists.newArrayList();
-        List<Fruit> query = Lists.newArrayList();
+        List<BaseId> submit = submitList;
+        List<Fruit> query = queryList;
 
         ArrayList<BaseId> batchUpdate = Lists.newArrayList();
         ArrayList<BaseId> batchAdd = Lists.newArrayList();
 
         ArrayList<Long> submitIds = Lists.newArrayList();
         ArrayList<Long> queryIds = Lists.newArrayList();
-        ArrayList<Long> batchRemoveIds = Lists.newArrayList();
+        ArrayList<Long> batchRemoveIds;
 
 
         submit.stream().forEach(id -> {

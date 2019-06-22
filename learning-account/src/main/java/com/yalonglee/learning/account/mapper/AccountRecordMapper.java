@@ -1,8 +1,8 @@
 package com.yalonglee.learning.account.mapper;
 
-import com.yalonglee.learning.account.domain.PaymentDTO;
+import com.yalonglee.learning.account.utils.account.PaymentDTO;
 import com.yalonglee.learning.account.mapper.base.AccountBaseMapper;
-import com.yalonglee.learning.account.domain.AccountRecordInfo;
+import com.yalonglee.learning.account.utils.account.AccountRecordInfo;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 

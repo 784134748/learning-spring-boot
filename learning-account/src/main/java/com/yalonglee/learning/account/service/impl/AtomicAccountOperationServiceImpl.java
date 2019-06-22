@@ -1,6 +1,6 @@
 package com.yalonglee.learning.account.service.impl;
 
-import com.yalonglee.learning.account.domain.AccountDTO;
+import com.yalonglee.learning.account.utils.account.AccountDTO;
 import com.yalonglee.learning.account.exception.BizzRuntimeException;
 import com.yalonglee.learning.account.mapper.AccountMapper;
 import com.yalonglee.learning.account.service.AtomicAccountOperationService;

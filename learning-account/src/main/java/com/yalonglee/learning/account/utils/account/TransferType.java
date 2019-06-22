@@ -1,4 +1,4 @@
-package com.yalonglee.learning.account.domain;
+package com.yalonglee.learning.account.utils.account;
 
 import com.yalonglee.learning.account.exception.BizzRuntimeException;
 

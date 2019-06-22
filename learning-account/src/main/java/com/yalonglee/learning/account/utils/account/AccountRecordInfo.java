@@ -1,4 +1,4 @@
-package com.yalonglee.learning.account.domain;
+package com.yalonglee.learning.account.utils.account;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
@@ -16,9 +16,6 @@ public class AccountRecordInfo {
 
     @ApiModelProperty(value = "流水号", dataType = "String")
     private String serialNumber;
-
-    @ApiModelProperty(value = "创世货币uuid", dataType = "String")
-    private String currencyBaseUuid;
 
     @ApiModelProperty(value = "账户地址", dataType = "String")
     private String accountAddr;

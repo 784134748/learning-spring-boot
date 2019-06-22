@@ -1,7 +1,7 @@
 package com.yalonglee.learning.account.service;
 
 
-import com.yalonglee.learning.account.domain.AccountDTO;
+import com.yalonglee.learning.account.utils.account.AccountDTO;
 import com.yalonglee.learning.account.exception.BizzRuntimeException;
 
 /**

@@ -1,7 +1,7 @@
 package com.yalonglee.learning.account.mapper;
 
 import com.yalonglee.learning.account.mapper.base.AccountBaseMapper;
-import com.yalonglee.learning.account.domain.AccountLogInfo;
+import com.yalonglee.learning.account.utils.account.AccountLogInfo;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

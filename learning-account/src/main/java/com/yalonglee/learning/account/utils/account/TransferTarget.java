@@ -1,10 +1,8 @@
-package com.yalonglee.learning.account.domain;
+package com.yalonglee.learning.account.utils.account;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * <p>《转账BO》

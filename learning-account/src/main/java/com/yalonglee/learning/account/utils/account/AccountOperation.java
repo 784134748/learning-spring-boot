@@ -1,6 +1,6 @@
-package com.yalonglee.learning.account.domain;
+package com.yalonglee.learning.account.utils.account;
 
-public enum TransferOperation {
+public enum AccountOperation {
     /**
      * 所有可用金额被耗尽的账户记录的ID（最后一条被消耗的账户记录除外）
      */

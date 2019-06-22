@@ -1,4 +1,4 @@
-package com.yalonglee.learning.account.domain;
+package com.yalonglee.learning.account.utils.account;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
@@ -23,7 +23,7 @@ public class AccountLogInfo {
     @ApiModelProperty(value = "新生账户记录变更次数（默认为0）", dataType = "Integer")
     private Integer accountRecordIndex;
 
-    @ApiModelProperty(value = "资金来源账户记录id（默认为0，创世货币不来自任一账户）", dataType = "Long")
+    @ApiModelProperty(value = "资金来源账户记录id（默认为0，充值的金额不来自任一账户）", dataType = "Long")
     private Long fromAccountRecordId;
 
     @ApiModelProperty(value = "资金来源账户记录变更次数", dataType = "Integer")
