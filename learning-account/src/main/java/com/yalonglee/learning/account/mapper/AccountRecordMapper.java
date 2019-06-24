@@ -1,6 +1,6 @@
 package com.yalonglee.learning.account.mapper;
 
-import com.yalonglee.learning.account.utils.account.PaymentDTO;
+import com.yalonglee.learning.account.utils.account.CompleteTransferAccountRecordInfo;
 import com.yalonglee.learning.account.mapper.base.AccountBaseMapper;
 import com.yalonglee.learning.account.utils.account.AccountRecordInfo;
 import org.apache.ibatis.annotations.Param;
@@ -21,7 +21,7 @@ public interface AccountRecordMapper extends AccountBaseMapper<AccountRecordInfo
      * @param amount
      * @return
      */
-    List<PaymentDTO> payment(@Param("accountAddr") String accountAddr, @Param("amount") Double amount);
+    List<CompleteTransferAccountRecordInfo> payment(@Param("accountAddr") String accountAddr, @Param("amount") Double amount);
 
     /**
      * 批量插入账户记录

@@ -1,6 +1,6 @@
 package com.yalonglee.learning.account.service.impl;
 
-import com.yalonglee.learning.account.utils.account.AccountDTO;
+import com.yalonglee.learning.account.utils.account.AccountInfo;
 import com.yalonglee.learning.account.exception.BizzRuntimeException;
 import com.yalonglee.learning.account.mapper.AccountMapper;
 import com.yalonglee.learning.account.service.AtomicAccountOperationService;
@@ -31,7 +31,7 @@ public class AtomicAccountOperationServiceImpl implements AtomicAccountOperation
      * @throws BizzRuntimeException
      */
     @Override
-    public AccountDTO startTransaction(String accountAddr, Double paymentAmount) {
+    public AccountInfo startTransaction(String accountAddr, Double paymentAmount) {
         return lockedAccountAvailablePaymentAmount(accountAddr, paymentAmount);
     }
 
@@ -44,11 +44,11 @@ public class AtomicAccountOperationServiceImpl implements AtomicAccountOperation
      */
     @Override
     public void waitWithdrawCashes(String serialNumber, String accountAddr, Double waitWithdrawCashesAmount) {
-        AccountDTO account = this.lockedAccountAvailableWithdrawCashesAmount(accountAddr, waitWithdrawCashesAmount);
+        AccountInfo account = this.lockedAccountAvailableWithdrawCashesAmount(accountAddr, waitWithdrawCashesAmount);
         //账户id
         long accountId = account.getId();
         //待更新的提现金额
-        double updateWaitWithdrawCashes = account.getWaitWithDrawCashesAmount() + waitWithdrawCashesAmount;
+        double updateWaitWithdrawCashes = account.getAccountWaitWithdrawCashesAmount() + waitWithdrawCashesAmount;
         accountMapper.updateWaitWithdrawCashes(accountId, updateWaitWithdrawCashes);
         log.info("流水号：{},锁定账户地址为 {} 的账户待提现金额 {}", serialNumber, accountAddr, waitWithdrawCashesAmount);
     }
@@ -62,11 +62,11 @@ public class AtomicAccountOperationServiceImpl implements AtomicAccountOperation
      */
     @Override
     public void endWithdrawCashes(String serialNumber, String accountAddr, Double withdrawCashesAmount) {
-        AccountDTO account = accountMapper.getAccountAmountByAccountAddr(accountAddr);
+        AccountInfo account = accountMapper.getAccountAmountByAccountAddr(accountAddr);
         //账户id
         long accountId = account.getId();
         //待更新的提现金额
-        double updateWaitWithdrawCashes = account.getWaitWithDrawCashesAmount() - withdrawCashesAmount;
+        double updateWaitWithdrawCashes = account.getAccountWaitWithdrawCashesAmount() - withdrawCashesAmount;
         accountMapper.updateWaitWithdrawCashes(accountId, updateWaitWithdrawCashes);
         log.info("流水号：{},释放账户地址为 {} 的账户待提现金额 {}", serialNumber, accountAddr, withdrawCashesAmount);
     }
@@ -77,8 +77,8 @@ public class AtomicAccountOperationServiceImpl implements AtomicAccountOperation
      * @param accountAddr
      * @param paymentAmount
      */
-    private AccountDTO accountAvailablePaymentAmount(String accountAddr, Double paymentAmount) {
-        AccountDTO account = accountMapper.getAccountAmountByAccountAddr(accountAddr);
+    private AccountInfo accountAvailablePaymentAmount(String accountAddr, Double paymentAmount) {
+        AccountInfo account = accountMapper.getAccountAmountByAccountAddr(accountAddr);
         //检查账户可用余额
         checkAccountAvailableAmount(account, paymentAmount, null);
         return account;
@@ -89,11 +89,11 @@ public class AtomicAccountOperationServiceImpl implements AtomicAccountOperation
      *
      * @param accountAddr
      */
-    private AccountDTO lockedAccountAvailablePaymentAmount(String accountAddr, Double paymentAmount) {
+    private AccountInfo lockedAccountAvailablePaymentAmount(String accountAddr, Double paymentAmount) {
         //不锁表情况下判断账户余额是否满足支付条件
         this.accountAvailablePaymentAmount(accountAddr, paymentAmount);
         //锁表
-        AccountDTO lockedAccount = getAccountLock(accountAddr);
+        AccountInfo lockedAccount = getAccountLock(accountAddr);
         //检查账户可用余额
         checkAccountAvailableAmount(lockedAccount, paymentAmount, null);
         return lockedAccount;
@@ -103,12 +103,12 @@ public class AtomicAccountOperationServiceImpl implements AtomicAccountOperation
      * 判断账户余额是否满足提现条件（非锁定状态下）
      *
      * @param accountAddr
-     * @param withDrawCashesAmount
+     * @param withdrawCashesAmount
      */
-    private AccountDTO accountAvailableWithdrawCashesAmount(String accountAddr, Double withDrawCashesAmount) {
-        AccountDTO account = accountMapper.getAccountAmountByAccountAddr(accountAddr);
+    private AccountInfo accountAvailableWithdrawCashesAmount(String accountAddr, Double withdrawCashesAmount) {
+        AccountInfo account = accountMapper.getAccountAmountByAccountAddr(accountAddr);
         //检查账户可提现金额
-        checkAccountAvailableAmount(account, null, withDrawCashesAmount);
+        checkAccountAvailableAmount(account, null, withdrawCashesAmount);
         return account;
     }
 
@@ -117,13 +117,13 @@ public class AtomicAccountOperationServiceImpl implements AtomicAccountOperation
      *
      * @param accountAddr
      */
-    private AccountDTO lockedAccountAvailableWithdrawCashesAmount(String accountAddr, Double withDrawCashesAmount) {
+    private AccountInfo lockedAccountAvailableWithdrawCashesAmount(String accountAddr, Double withdrawCashesAmount) {
         //不锁表情况下判断账户余额是否满足提现条件
-        this.accountAvailableWithdrawCashesAmount(accountAddr, withDrawCashesAmount);
+        this.accountAvailableWithdrawCashesAmount(accountAddr, withdrawCashesAmount);
         //锁表
-        AccountDTO lockedAccount = getAccountLock(accountAddr);
+        AccountInfo lockedAccount = getAccountLock(accountAddr);
         //检查账户可提现金额
-        checkAccountAvailableAmount(lockedAccount, null, withDrawCashesAmount);
+        checkAccountAvailableAmount(lockedAccount, null, withdrawCashesAmount);
         return lockedAccount;
     }
 
@@ -133,9 +133,9 @@ public class AtomicAccountOperationServiceImpl implements AtomicAccountOperation
      * @param accountAddr
      * @throws BizzRuntimeException
      */
-    private AccountDTO getAccountLock(String accountAddr) throws BizzRuntimeException {
+    private AccountInfo getAccountLock(String accountAddr) throws BizzRuntimeException {
         //获取记录锁（行锁）
-        AccountDTO account = accountMapper.getRecordLock(accountAddr);
+        AccountInfo account = accountMapper.getRecordLock(accountAddr);
         //检查账户
         checkAccountAvailableAmount(account, null, null);
         //通过时间戳限定锁所能操作的数据集的范围（数据集的创建时间必须小于设定的时间）
@@ -149,17 +149,17 @@ public class AtomicAccountOperationServiceImpl implements AtomicAccountOperation
      * @param account
      * @param paymentAmount
      */
-    private void checkAccountAvailableAmount(AccountDTO account, Double paymentAmount, Double withDrawCashesAmount) {
+    private void checkAccountAvailableAmount(AccountInfo account, Double paymentAmount, Double withdrawCashesAmount) {
         if (account == null) {
             throw new BizzRuntimeException("账户地址不存在");
         }
-        if (account.getTimestampLock() > account.getCurrentTimestamp()) {
+        if (account.getAccountTimestampLock() > account.getAccountCurrentTimestamp()) {
             throw new BizzRuntimeException("数据库时间异常");
         }
-        if (paymentAmount != null && account.getTotalAvailableAmount() < paymentAmount) {
+        if (paymentAmount != null && account.getAccountTotalAvailableAmount() < paymentAmount) {
             throw new BizzRuntimeException("当前账户可用余额不足");
         }
-        if (withDrawCashesAmount != null && account.getWaitWithDrawCashesAmount() < withDrawCashesAmount) {
+        if (withdrawCashesAmount != null && account.getAccountWaitWithdrawCashesAmount() < withdrawCashesAmount) {
             throw new BizzRuntimeException("当前账户可提现金额不足");
         }
     }

@@ -1,6 +1,6 @@
 package com.yalonglee.learning.account.mapper;
 
-import com.yalonglee.learning.account.utils.account.AccountDTO;
+import com.yalonglee.learning.account.utils.account.AccountInfo;
 import com.yalonglee.learning.account.mapper.base.AccountBaseMapper;
 import com.yalonglee.learning.account.model.AccountModel;
 import org.apache.ibatis.annotations.Param;
@@ -29,7 +29,7 @@ public interface AccountMapper extends AccountBaseMapper<AccountModel> {
      * @return
      */
     @Select("select account.id from account where account.id = (select account.id from account where account_addr = #{accountAddr}) for update")
-    AccountDTO getRecordLock(@Param("accountAddr") String accountAddr);
+    AccountInfo getRecordLock(@Param("accountAddr") String accountAddr);
 
     /**
      * 根据账户id更新待提现金额
@@ -47,7 +47,7 @@ public interface AccountMapper extends AccountBaseMapper<AccountModel> {
      * @return
      */
     @Select("select account.account_addr, account.wait_withdraw_cashes_amount, account.timestamp_lock, current_timestamp, sum(account_record.available_amount) as total_available_amount, sum(account_record.frozen_amount) as total_frozen_amount from account, account_record where account.account_addr = #{accountAddr} and account_record.account_id = account.id")
-    AccountDTO getAccountAmountByAccountAddr(@Param("accountAddr") String accountAddr);
+    AccountInfo getAccountAmountByAccountAddr(@Param("accountAddr") String accountAddr);
 
 
 }

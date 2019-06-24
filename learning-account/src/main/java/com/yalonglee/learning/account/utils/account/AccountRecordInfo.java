@@ -4,8 +4,9 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Data;
 
+
 /**
- * @author
+ * @author yalonglee
  */
 @Data
 @Builder
@@ -16,6 +17,9 @@ public class AccountRecordInfo {
 
     @ApiModelProperty(value = "流水号", dataType = "String")
     private String serialNumber;
+
+    @ApiModelProperty(value = "账户操作类型 1充值 2转账 3提现", dataType = "Integer")
+    private Integer accountOperationType;
 
     @ApiModelProperty(value = "账户地址", dataType = "String")
     private String accountAddr;

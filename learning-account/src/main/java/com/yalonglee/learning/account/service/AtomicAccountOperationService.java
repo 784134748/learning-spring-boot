@@ -1,7 +1,7 @@
 package com.yalonglee.learning.account.service;
 
 
-import com.yalonglee.learning.account.utils.account.AccountDTO;
+import com.yalonglee.learning.account.utils.account.AccountInfo;
 import com.yalonglee.learning.account.exception.BizzRuntimeException;
 
 /**
@@ -17,7 +17,7 @@ public interface AtomicAccountOperationService {
      * @return
      * @throws BizzRuntimeException
      */
-    AccountDTO startTransaction(String accountAddr, Double paymentAmount);
+    AccountInfo startTransaction(String accountAddr, Double paymentAmount);
 
     /**
      * 提现开始前锁定金额

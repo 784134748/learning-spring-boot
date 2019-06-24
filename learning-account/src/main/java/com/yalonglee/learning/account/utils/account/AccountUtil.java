@@ -2,8 +2,9 @@ package com.yalonglee.learning.account.utils.account;
 
 import com.google.common.collect.Lists;
 import com.yalonglee.learning.account.exception.BizzRuntimeException;
-import com.yalonglee.learning.account.utils.Json2;
 import com.yalonglee.learning.account.utils.snowflake.SnowflakeIdWorker;
+import lombok.Builder;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
@@ -15,13 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * <p>《转账BO》
- * <p><功能详细描述>
- * <p>
- *
- * @author listener
- * @version [V1.0, 2019/1/8]
- * @see [相关类/方法]
+ * @author yalonglee
  */
 @Slf4j
 @Component
@@ -43,24 +38,42 @@ public class AccountUtil {
      * 账户记录默认变更次数
      */
     private static final int SYSTEM_INDEX = 0;
+    /**
+     * 账户记录默认起始行号
+     */
+    private static final int START_ACCOUNT_RECORD_NO = 0;
 
     /**
      * 充值操作
      *
      * @return
      */
-    public static EnumMap<AccountOperation, Object> deposit(String serialNumber, String targetAccountAddr, Double totalDepositAmount) {
+    public static EnumMap<AccountOperation, Object> deposit(DepositParam depositParam) {
 
         //参数校验
-        checkDespiteParams(serialNumber, targetAccountAddr, totalDepositAmount);
+        checkDespiteParams(depositParam);
 
-        List<PaymentDTO> paymentDTOList = Lists.newArrayList();
-        paymentDTOList.add(PaymentDTO.builder().index(0).rowNo(1).sum(totalDepositAmount).accountAddr(AccountUtil.SYSTEM_ACCOUNT_ADDR).accountRecordId(0L).availableAmount(totalDepositAmount).frozenAmount(0.00D).build());
+        List<CompleteTransferAccountRecordInfo> completeTransferAccountRecordInfoList = Lists.newArrayList();
+        completeTransferAccountRecordInfoList.add(CompleteTransferAccountRecordInfo.builder()
+                .index(AccountUtil.SYSTEM_INDEX)
+                .accountRecordRowNo(AccountUtil.START_ACCOUNT_RECORD_NO)
+                .sumAccountRecordAvailableAmount(depositParam.getTotalDepositAmount())
+                .accountAddr(AccountUtil.SYSTEM_ACCOUNT_ADDR).accountRecordId(0L)
+                .accountRecordAvailableAmount(depositParam.getTotalDepositAmount())
+                .accountRecordFrozenAmount(AccountUtil.SYSTEM_DEFINE_AMOUNT_ZERO)
+                .build());
 
         List<TransferTarget> transferTargetList = Lists.newArrayList();
-        transferTargetList.add(TransferTarget.builder().accountAddr(targetAccountAddr).totalTransferAmount(totalDepositAmount).build());
+        transferTargetList.add(TransferTarget.builder().accountAddr(depositParam.getTargetAccountAddr()).transferAmount(depositParam.getTotalDepositAmount()).build());
 
-        return oneToManyTransfer(serialNumber, AccountUtil.SYSTEM_ACCOUNT_ADDR, totalDepositAmount, paymentDTOList, transferTargetList);
+        return oneToManyTransfer(OneToManyTransferParam.builder()
+                .serialNumber(depositParam.getSerialNumber())
+                .sourceAccountAddr(AccountUtil.SYSTEM_ACCOUNT_ADDR)
+                .accountOperationType(AccountOperationType.DEPOSIT.getKey())
+                .totalTransferAmount(depositParam.getTotalDepositAmount())
+                .completeTransferAccountRecordInfoList(completeTransferAccountRecordInfoList)
+                .transferTargetList(transferTargetList)
+                .build());
 
     }
 
@@ -69,125 +82,126 @@ public class AccountUtil {
      *
      * @return
      */
-    public static EnumMap<AccountOperation, Object> transfer(String serialNumber, String sourceAccountAddr, Double totalTransferAmount, List<PaymentDTO> paymentDTOList, List<TransferTarget> transferTargetList) {
+    public static EnumMap<AccountOperation, Object> transfer(TransferParam transferParam) {
 
         //参数校验
-        checkTransferParams(serialNumber, sourceAccountAddr, totalTransferAmount, paymentDTOList, transferTargetList);
+        checkTransferParams(transferParam);
 
-        return oneToManyTransfer(serialNumber, sourceAccountAddr, totalTransferAmount, paymentDTOList, transferTargetList);
-
+        return oneToManyTransfer(OneToManyTransferParam.builder()
+                .serialNumber(transferParam.getSerialNumber())
+                .sourceAccountAddr(transferParam.getSourceAccountAddr())
+                .accountOperationType(AccountOperationType.TRANSFER.getKey())
+                .totalTransferAmount(transferParam.getTotalTransferAmount())
+                .completeTransferAccountRecordInfoList(transferParam.getCompleteTransferAccountRecordInfoList())
+                .transferTargetList(transferParam.getTransferTargetList())
+                .build());
     }
 
     /**
      * 提现操作
      *
-     * @param serialNumber
-     * @param sourceAccountAddr
-     * @param totalWithdrawAmount
-     * @param paymentDTOList
      * @return
      */
-    public static EnumMap<AccountOperation, Object> withdraw(String serialNumber, String sourceAccountAddr, Double totalWithdrawAmount, List<PaymentDTO> paymentDTOList) {
+    public static EnumMap<AccountOperation, Object> withdraw(WithdrawParam withdrawParam) {
         //参数校验
-        checkWithdrawParams(serialNumber, sourceAccountAddr, totalWithdrawAmount, paymentDTOList);
+        checkWithdrawParams(withdrawParam);
 
         List<TransferTarget> transferTargetList = Lists.newArrayList();
-        transferTargetList.add(TransferTarget.builder().accountAddr(AccountUtil.SYSTEM_ACCOUNT_ADDR).totalTransferAmount(totalWithdrawAmount).build());
+        transferTargetList.add(TransferTarget.builder().accountAddr(AccountUtil.SYSTEM_ACCOUNT_ADDR).transferAmount(withdrawParam.getTotalWithdrawAmount()).build());
 
-        return oneToManyTransfer(serialNumber, sourceAccountAddr, totalWithdrawAmount, paymentDTOList, transferTargetList);
+        return oneToManyTransfer(OneToManyTransferParam.builder()
+                .serialNumber(withdrawParam.getSerialNumber())
+                .sourceAccountAddr(withdrawParam.getSourceAccountAddr())
+                .accountOperationType(AccountOperationType.WITHDRAW.getKey())
+                .totalTransferAmount(withdrawParam.getTotalWithdrawAmount())
+                .completeTransferAccountRecordInfoList(withdrawParam.getCompleteTransferAccountRecordInfoList())
+                .transferTargetList(transferTargetList)
+                .build());
     }
 
     /**
-     * 校验转账参数
-     *
-     * @param serialNumber
-     * @param targetAccountAddr
-     * @param totalDespiteAmount
+     * 校验充值参数
      */
-    private static void checkDespiteParams(String serialNumber, String targetAccountAddr, Double totalDespiteAmount) {
+    private static void checkDespiteParams(DepositParam depositParam) {
         final double zero = 0.00D;
 
-        if (StringUtils.isBlank(serialNumber)) {
+        if (StringUtils.isBlank(depositParam.getSerialNumber())) {
             throw new BizzRuntimeException("流水号不能为空");
         }
-        if (StringUtils.isBlank(targetAccountAddr)) {
+        if (StringUtils.isBlank(depositParam.getTargetAccountAddr())) {
             throw new BizzRuntimeException("充值账户异常");
         }
-        if (totalDespiteAmount <= zero) {
+        if (depositParam.getTotalDepositAmount() <= zero) {
             throw new BizzRuntimeException("充值金额必须大于0.00");
         }
     }
 
     /**
      * 校验转账参数
-     *
-     * @param serialNumber
-     * @param sourceAccountAddr
-     * @param totalTransferAmount
-     * @param paymentDTOList
-     * @param transferTargetList
      */
-    private static void checkTransferParams(String serialNumber, String sourceAccountAddr, Double totalTransferAmount, List<PaymentDTO> paymentDTOList, List<TransferTarget> transferTargetList) {
+    private static void checkTransferParams(TransferParam transferParam) {
         final double zero = 0.00D;
 
-        if (StringUtils.isBlank(serialNumber)) {
+        if (StringUtils.isBlank(transferParam.getSerialNumber())) {
             throw new BizzRuntimeException("流水号不能为空");
         }
-        if (StringUtils.isBlank(sourceAccountAddr)) {
+        if (StringUtils.isBlank(transferParam.getSourceAccountAddr())) {
             throw new BizzRuntimeException("转账账户异常");
         }
-        if (totalTransferAmount <= zero) {
+        if (transferParam.getTotalTransferAmount() <= zero) {
             throw new BizzRuntimeException("转账金额必须大于0.00");
         }
-        if (paymentDTOList == null || paymentDTOList.isEmpty()) {
+        if (transferParam.getCompleteTransferAccountRecordInfoList() == null || transferParam.getCompleteTransferAccountRecordInfoList().isEmpty()) {
             throw new BizzRuntimeException("未获取到任何可支付的账户记录");
         }
-        if (transferTargetList == null || transferTargetList.isEmpty()) {
+        if (transferParam.transferTargetList == null || transferParam.getTransferTargetList().isEmpty()) {
             throw new BizzRuntimeException("未获取到任何入账账户地址");
         }
 
         //本次转账涉及到的账户记录进行升序排序
-        paymentDTOList.stream()
-                .filter(paymentDTO -> paymentDTO.getSum() - paymentDTO.getAvailableAmount() < totalTransferAmount)
-                .sorted(Comparator.comparing(PaymentDTO::getSum))
+        transferParam.getCompleteTransferAccountRecordInfoList().stream()
+                .filter(completeTransferAccountRecordInfo -> completeTransferAccountRecordInfo.getSumAccountRecordAvailableAmount() - completeTransferAccountRecordInfo.getAccountRecordAvailableAmount() < transferParam.getTotalTransferAmount())
+                .sorted(Comparator.comparing(CompleteTransferAccountRecordInfo::getSumAccountRecordAvailableAmount))
                 .collect(Collectors.toList());
     }
 
     /**
      * 校验提现参数
-     *
-     * @param serialNumber
-     * @param sourceAccountAddr
-     * @param totalTransferAmount
-     * @param paymentDTOList
      */
-    private static void checkWithdrawParams(String serialNumber, String sourceAccountAddr, Double totalTransferAmount, List<PaymentDTO> paymentDTOList) {
+    private static void checkWithdrawParams(WithdrawParam withdrawParam) {
         final double zero = 0.00D;
 
-        if (StringUtils.isBlank(serialNumber)) {
+        if (StringUtils.isBlank(withdrawParam.getSerialNumber())) {
             throw new BizzRuntimeException("流水号不能为空");
         }
-        if (StringUtils.isBlank(sourceAccountAddr)) {
+        if (StringUtils.isBlank(withdrawParam.getSourceAccountAddr())) {
             throw new BizzRuntimeException("提现账户异常");
         }
-        if (totalTransferAmount <= zero) {
+        if (withdrawParam.getTotalWithdrawAmount() <= zero) {
             throw new BizzRuntimeException("提现金额必须大于0.00");
         }
-        if (paymentDTOList == null || paymentDTOList.isEmpty()) {
-            throw new BizzRuntimeException("未获取到任何可支付的账户记录");
+        if (withdrawParam.getCompleteTransferAccountRecordInfoList() == null || withdrawParam.getCompleteTransferAccountRecordInfoList().isEmpty()) {
+            throw new BizzRuntimeException("未获取到任何可提现的账户记录");
         }
 
         //本次转账涉及到的账户记录进行升序排序
-        paymentDTOList.stream()
-                .filter(paymentDTO -> paymentDTO.getSum() - paymentDTO.getAvailableAmount() < totalTransferAmount)
-                .sorted(Comparator.comparing(PaymentDTO::getSum))
+        withdrawParam.getCompleteTransferAccountRecordInfoList().stream()
+                .filter(completeTransferAccountRecordInfo -> completeTransferAccountRecordInfo.getSumAccountRecordAvailableAmount() - completeTransferAccountRecordInfo.getAccountRecordAvailableAmount() < withdrawParam.getTotalWithdrawAmount())
+                .sorted(Comparator.comparing(CompleteTransferAccountRecordInfo::getSumAccountRecordAvailableAmount))
                 .collect(Collectors.toList());
     }
 
     /**
      * 转账金额分割逻辑
      */
-    private static EnumMap<AccountOperation, Object> oneToManyTransfer(String serialNumber, String sourceAccountAddr, Double totalTransferAmount, List<PaymentDTO> paymentDTOList, List<TransferTarget> transferTargetList) {
+    private static EnumMap<AccountOperation, Object> oneToManyTransfer(OneToManyTransferParam oneToManyTransferParam) {
+
+        final String serialNumber = oneToManyTransferParam.getSerialNumber();
+        final String sourceAccountAddr = oneToManyTransferParam.getSourceAccountAddr();
+        final Integer accountOperationType = oneToManyTransferParam.getAccountOperationType();
+        final Double totalTransferAmount = oneToManyTransferParam.getTotalTransferAmount();
+        final List<CompleteTransferAccountRecordInfo> completeTransferAccountRecordInfoList = oneToManyTransferParam.getCompleteTransferAccountRecordInfoList();
+        final List<TransferTarget> transferTargetList = oneToManyTransferParam.getTransferTargetList();
 
         log.info("流水号：{},进入一对多转账的方法: 出账账户地址【{}】 - 出账总金额【{}】", serialNumber, sourceAccountAddr, totalTransferAmount);
 
@@ -209,19 +223,19 @@ public class AccountUtil {
 
 
         //获取支付记录的迭代器
-        Iterator<PaymentDTO> iterator = paymentDTOList.listIterator();
+        Iterator<CompleteTransferAccountRecordInfo> iterator = completeTransferAccountRecordInfoList.listIterator();
         //迭代器当前位置的paymentDTO
-        PaymentDTO payment = PaymentDTO.builder().build();
+        CompleteTransferAccountRecordInfo payment = CompleteTransferAccountRecordInfo.builder().build();
         //迭代器是否继续迭代(当前账户记录中的可用金额是否被消耗殆尽)
         boolean isUseUp = true;
 
-        for (TransferTarget tt : transferTargetList) {
+        for (TransferTarget transferTarget : transferTargetList) {
             //是否已发现本次转账涉及的起点账户记录
             boolean isFindStart = false;
             //是否已发现本次转账涉及的终点账户记录
             boolean isFindEnd = false;
             //涉及本次转账的账户记录
-            List<PaymentDTO> payments = Lists.newArrayList();
+            List<CompleteTransferAccountRecordInfo> accountRecordInfoList = Lists.newArrayList();
             do {
                 if (isUseUp) {
                     payment = iterator.next();
@@ -237,9 +251,9 @@ public class AccountUtil {
                 //A、B、C、D、E、F值之间的关系，[A小于等于B],[B小于C],[D小于E],[E小于等于F]
                 //获取值大于等于零的首间距
                 if (!isFindStart) {
-                    double valueA = payment.getSum() - payment.getAvailableAmount();
+                    double valueA = payment.getSumAccountRecordAvailableAmount() - payment.getAccountRecordAvailableAmount();
                     double valueB = already;
-                    double valueC = payment.getSum();
+                    double valueC = payment.getSumAccountRecordAvailableAmount();
                     if ((valueA <= valueB) && (valueB < valueC)) {
                         isFindStart = true;
                     } else {
@@ -248,7 +262,7 @@ public class AccountUtil {
                 }
                 //统计涉及本次转账的账户记录(从发现开始节点开始统计，直至发现结束节点)
                 if (isFindStart && (!isFindEnd)) {
-                    payments.add(payment);
+                    accountRecordInfoList.add(payment);
                 }
                 //统计所有可用金额被耗尽的账户记录的ID
                 if (iterator.hasNext() && isUseUp) {
@@ -258,15 +272,15 @@ public class AccountUtil {
                 if ((!iterator.hasNext()) && lastAccountRecord == null) {
                     AccountRecordInfo accountRecordTmp = AccountRecordInfo.builder()
                             .id(payment.getAccountRecordId())
-                            .availableAmount(payment.getSum() - total)
+                            .availableAmount(payment.getSumAccountRecordAvailableAmount() - total)
                             .build();
                     lastAccountRecord = accountRecordTmp;
                 }
                 //获取值大于等于零的尾间距
                 if (!isFindEnd) {
-                    double valueD = payment.getSum() - payment.getAvailableAmount();
-                    double valueE = already + tt.getTotalTransferAmount();
-                    double valueF = payment.getSum();
+                    double valueD = payment.getSumAccountRecordAvailableAmount() - payment.getAccountRecordAvailableAmount();
+                    double valueE = already + transferTarget.getTransferAmount();
+                    double valueF = payment.getSumAccountRecordAvailableAmount();
                     if ((valueD < valueE) && (valueE <= valueF)) {
                         isFindEnd = true;
                     }
@@ -277,11 +291,20 @@ public class AccountUtil {
                 throw new BizzRuntimeException("未匹配上可完成该笔转账金额的账户记录");
             }
             //一对一转账
-            oneToOneTransfer(serialNumber, sourceAccountAddr, payments, tt, insertNewAccountRecordInfoList, insertNewTransferInfoList, insertNewAccountLogInfoList);
+            oneToOneTransfer(OneToOneTransferParam.builder()
+                    .serialNumber(serialNumber)
+                    .sourceAccountAddr(sourceAccountAddr)
+                    .accountOperationType(accountOperationType)
+                    .completeTransferAccountRecordInfoList(accountRecordInfoList)
+                    .transferTarget(transferTarget)
+                    .insertNewAccountRecordInfoList(insertNewAccountRecordInfoList)
+                    .insertNewTransferInfoList(insertNewTransferInfoList)
+                    .insertNewAccountLogInfoList(insertNewAccountLogInfoList)
+                    .build());
             //更新已转账金额
-            already += tt.getTotalTransferAmount();
+            already += transferTarget.getTransferAmount();
             //迭代器是否继续迭代(当前账户记录中的可用金额是否被消耗殆尽)
-            if (already == payment.getSum()) {
+            if (already == payment.getSumAccountRecordAvailableAmount()) {
                 isUseUp = true;
             } else {
                 isUseUp = false;
@@ -299,50 +322,55 @@ public class AccountUtil {
 
     /**
      * 转账记录的生成逻辑
-     *
-     * @param serialNumber      流水号
-     * @param sourceAccountAddr 出账账户地址
-     * @param payments          涉及本次转账的账户记录
-     * @param target            入账的账户以及金额
      */
-    private static void oneToOneTransfer(String serialNumber, String sourceAccountAddr, List<PaymentDTO> payments, TransferTarget target, List<AccountRecordInfo> insertNewAccountRecordInfoList, List<TransferInfo> insertNewTransferInfoList, List<AccountLogInfo> insertNewAccountLogInfoList) {
-        log.info("流水号：{},进入顺序转账方法: 入账账户地址【{}】 - 入账总金额【{}】", serialNumber, target.getAccountAddr(), target.getTotalTransferAmount());
+    private static void oneToOneTransfer(OneToOneTransferParam oneToOneTransferParam) {
+        final String serialNumber = oneToOneTransferParam.getSerialNumber();
+        final String sourceAccountAddr = oneToOneTransferParam.getSourceAccountAddr();
+        final Integer accountOperationType = oneToOneTransferParam.getAccountOperationType();
+        final List<CompleteTransferAccountRecordInfo> completeTransferAccountRecordInfoList = oneToOneTransferParam.getCompleteTransferAccountRecordInfoList();
+        final TransferTarget transferTarget = oneToOneTransferParam.getTransferTarget();
+        List<AccountRecordInfo> insertNewAccountRecordInfoList = oneToOneTransferParam.getInsertNewAccountRecordInfoList();
+        List<TransferInfo> insertNewTransferInfoList = oneToOneTransferParam.getInsertNewTransferInfoList();
+        List<AccountLogInfo> insertNewAccountLogInfoList = oneToOneTransferParam.getInsertNewAccountLogInfoList();
+
+        log.info("流水号：{},进入顺序转账方法: 入账账户地址【{}】 - 入账总金额【{}】", serialNumber, transferTarget.getAccountAddr(), transferTarget.getTransferAmount());
         //入账账户地址
-        String targetAccountAddr = target.getAccountAddr();
+        String targetAccountAddr = transferTarget.getAccountAddr();
         //转账总金额
-        final double total = target.getTotalTransferAmount();
+        final double totalTransferAmount = transferTarget.getTransferAmount();
         //累计已转账金额
-        double already = AccountUtil.SYSTEM_DEFINE_AMOUNT_ZERO;
-        for (PaymentDTO payment : payments) {
+        double alreadyTransferAmount = AccountUtil.SYSTEM_DEFINE_AMOUNT_ZERO;
+        for (CompleteTransferAccountRecordInfo completeTransferAccountRecordInfo : completeTransferAccountRecordInfoList) {
             //剩余待转金额
-            double left = total - already;
+            double leftTransferAmount = totalTransferAmount - alreadyTransferAmount;
             //来源账户记录id
-            long fromAccountRecordId = payment.getAccountRecordId();
+            long fromAccountRecordId = completeTransferAccountRecordInfo.getAccountRecordId();
             //新产生账户记录的id
             long accountRecordId = autowiredSnowflakeIdWorker.genId();
             //来源账户记录变更次数
-            int fromAccountRecordIndex = payment.getIndex();
+            int fromAccountRecordIndex = completeTransferAccountRecordInfo.getIndex();
             //冻结的金额
-            double frozenAmount = payment.getFrozenAmount();
+            double frozenAmount = completeTransferAccountRecordInfo.getAccountRecordFrozenAmount();
             //支付记录剩余的可用金额
-            double leftAvailableAmount = payment.getAvailableAmount() - left;
+            double leftAvailableAmount = completeTransferAccountRecordInfo.getAccountRecordAvailableAmount() - leftTransferAmount;
             //支付记录可用金额被耗尽
             if (leftAvailableAmount < AccountUtil.SYSTEM_DEFINE_AMOUNT_ZERO) {
                 leftAvailableAmount = AccountUtil.SYSTEM_DEFINE_AMOUNT_ZERO;
             }
             //支付记录消耗的金额
-            double payAvailableAmount = payment.getAvailableAmount() - leftAvailableAmount;
-            already += payAvailableAmount;
+            double payAvailableAmount = completeTransferAccountRecordInfo.getAccountRecordAvailableAmount() - leftAvailableAmount;
+            alreadyTransferAmount += payAvailableAmount;
 
-            log.info("流水号：{},支付记录: 支付记录id【{}】 - 支付记录的可用金额【{}】 - 支付记录消耗的可用金额【{}】 - 支付记录剩余的可用金额【{}】", serialNumber, accountRecordId, payment.getAvailableAmount(), payAvailableAmount, leftAvailableAmount);
+            log.info("流水号：{},支付记录: 支付记录id【{}】 - 支付记录的可用金额【{}】 - 支付记录消耗的可用金额【{}】 - 支付记录剩余的可用金额【{}】", serialNumber, accountRecordId, completeTransferAccountRecordInfo.getAccountRecordAvailableAmount(), payAvailableAmount, leftAvailableAmount);
             //生成新的账户记录
             AccountRecordInfo newAccountRecordInfo = AccountRecordInfo.builder()
                     .id(accountRecordId)
                     .serialNumber(serialNumber)
+                    .accountOperationType(accountOperationType)
                     .fromAccountAddr(sourceAccountAddr)
                     .accountAddr(targetAccountAddr)
                     .index(AccountUtil.SYSTEM_INDEX)
-                    .availableAmount(payment.getAvailableAmount() - leftAvailableAmount)
+                    .availableAmount(completeTransferAccountRecordInfo.getAccountRecordAvailableAmount() - leftAvailableAmount)
                     .frozenAmount(AccountUtil.SYSTEM_DEFINE_AMOUNT_ZERO)
                     .build();
             insertNewAccountRecordInfoList.add(newAccountRecordInfo);
@@ -351,6 +379,7 @@ public class AccountUtil {
                     .id(autowiredSnowflakeIdWorker.genId())
                     .serialNumber(serialNumber)
                     .fromAccountRecordId(fromAccountRecordId)
+                    .accountOperationType(accountOperationType)
                     .fromAccountRecordIndex(fromAccountRecordIndex)
                     .accountRecordId(fromAccountRecordId)
                     .accountRecordIndex(AccountUtil.SYSTEM_INDEX)
@@ -363,6 +392,7 @@ public class AccountUtil {
                     .id(autowiredSnowflakeIdWorker.genId())
                     .serialNumber(serialNumber)
                     .fromAccountRecordId(fromAccountRecordId)
+                    .accountOperationType(accountOperationType)
                     .fromAccountRecordIndex(fromAccountRecordIndex)
                     .accountAddr(targetAccountAddr)
                     .accountRecordId(accountRecordId)
@@ -378,20 +408,22 @@ public class AccountUtil {
                 TransferInfo newSourceTransferInfo = TransferInfo.builder()
                         .id(autowiredSnowflakeIdWorker.genId())
                         .serialNumber(serialNumber)
-                        .amount(total)
+                        .accountOperationType(accountOperationType)
+                        .amount(totalTransferAmount)
                         .sourceAccountAddr(sourceAccountAddr)
                         .targetAccountAddr(targetAccountAddr)
                         .accountAddr(sourceAccountAddr)
-                        .transferType(TransferType.TRANSFER_OUT.getKey())
+                        .transferType(TransferType.OUT.getKey())
                         .build();
                 TransferInfo newTargetTransferInfo = TransferInfo.builder()
                         .id(autowiredSnowflakeIdWorker.genId())
                         .serialNumber(serialNumber)
-                        .amount(total)
+                        .accountOperationType(accountOperationType)
+                        .amount(totalTransferAmount)
                         .sourceAccountAddr(sourceAccountAddr)
                         .targetAccountAddr(targetAccountAddr)
                         .accountAddr(targetAccountAddr)
-                        .transferType(TransferType.TRANSFER_IN.getKey())
+                        .transferType(TransferType.IN.getKey())
                         .build();
                 insertNewTransferInfoList.add(newSourceTransferInfo);
                 insertNewTransferInfoList.add(newTargetTransferInfo);
@@ -401,18 +433,41 @@ public class AccountUtil {
 
     public static void main(String[] args) {
 
-        List<PaymentDTO> paymentDTOList = Lists.newArrayList();
-        paymentDTOList.add(PaymentDTO.builder().accountRecordId(1L).index(0).rowNo(0).accountAddr("a").availableAmount(10.00).frozenAmount(0.00).sum(10.00).build());
-        paymentDTOList.add(PaymentDTO.builder().accountRecordId(2L).index(0).rowNo(1).accountAddr("b").availableAmount(10.00).frozenAmount(0.00).sum(20.00).build());
-        paymentDTOList.add(PaymentDTO.builder().accountRecordId(3L).index(0).rowNo(2).accountAddr("c").availableAmount(10.00).frozenAmount(0.00).sum(30.00).build());
+        List<CompleteTransferAccountRecordInfo> completeTransferAccountRecordInfoList = Lists.newArrayList();
+        completeTransferAccountRecordInfoList.add(CompleteTransferAccountRecordInfo.builder().accountRecordId(1L).index(0).accountRecordRowNo(0).accountAddr("a").accountRecordAvailableAmount(10.00D).accountRecordFrozenAmount(0.00D).sumAccountRecordAvailableAmount(10.00D).build());
+        completeTransferAccountRecordInfoList.add(CompleteTransferAccountRecordInfo.builder().accountRecordId(2L).index(0).accountRecordRowNo(1).accountAddr("b").accountRecordAvailableAmount(10.00D).accountRecordFrozenAmount(0.00D).sumAccountRecordAvailableAmount(20.00D).build());
+        completeTransferAccountRecordInfoList.add(CompleteTransferAccountRecordInfo.builder().accountRecordId(3L).index(0).accountRecordRowNo(2).accountAddr("c").accountRecordAvailableAmount(10.00D).accountRecordFrozenAmount(0.00D).sumAccountRecordAvailableAmount(30.00D).build());
 
         List<TransferTarget> transferTargetList = Lists.newArrayList();
-        transferTargetList.add(TransferTarget.builder().accountAddr("e").totalTransferAmount(3.00).build());
+        transferTargetList.add(TransferTarget.builder().accountAddr("e").transferAmount(3.00D).build());
 
-        AccountUtil.deposit("123456789", "12345", 13.00);
-        AccountUtil.transfer("123456789", "12345", 13.00D, paymentDTOList, transferTargetList);
-        AccountUtil.withdraw("123456789", "12345", 13.00, paymentDTOList);
+        AccountUtil.deposit(DepositParam.builder().serialNumber("123456789").targetAccountAddr("12345").totalDepositAmount(13.00D).build());
+        AccountUtil.transfer(TransferParam.builder().serialNumber("123456789").sourceAccountAddr("12345").completeTransferAccountRecordInfoList(completeTransferAccountRecordInfoList).transferTargetList(transferTargetList).totalTransferAmount(13.00D).build());
+        AccountUtil.withdraw(WithdrawParam.builder().serialNumber("123456789").sourceAccountAddr("12345").totalWithdrawAmount(13.00D).completeTransferAccountRecordInfoList(completeTransferAccountRecordInfoList).build());
 
     }
+}
 
+@Data
+@Builder
+class OneToManyTransferParam {
+    private String serialNumber;
+    private String sourceAccountAddr;
+    private Integer accountOperationType;
+    private Double totalTransferAmount;
+    private List<CompleteTransferAccountRecordInfo> completeTransferAccountRecordInfoList;
+    private List<TransferTarget> transferTargetList;
+}
+
+@Data
+@Builder
+class OneToOneTransferParam {
+    private String serialNumber;
+    private String sourceAccountAddr;
+    private Integer accountOperationType;
+    private List<CompleteTransferAccountRecordInfo> completeTransferAccountRecordInfoList;
+    private TransferTarget transferTarget;
+    private List<AccountRecordInfo> insertNewAccountRecordInfoList;
+    private List<TransferInfo> insertNewTransferInfoList;
+    private List<AccountLogInfo> insertNewAccountLogInfoList;
 }

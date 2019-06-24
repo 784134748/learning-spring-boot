@@ -4,8 +4,9 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Data;
 
+
 /**
- * @author
+ * @author yalonglee
  */
 @Data
 @Builder
@@ -19,6 +20,9 @@ public class AccountLogInfo {
 
     @ApiModelProperty(value = "新生账户记录id（默认为0，提现操作不产生新生账户记录）", dataType = "Long")
     private Long accountRecordId;
+
+    @ApiModelProperty(value = "账户操作类型 1充值 2转账 3提现", dataType = "Integer")
+    private Integer accountOperationType;
 
     @ApiModelProperty(value = "新生账户记录变更次数（默认为0）", dataType = "Integer")
     private Integer accountRecordIndex;

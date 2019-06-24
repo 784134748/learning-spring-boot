@@ -7,26 +7,28 @@ import java.util.Objects;
 /**
  * @author yalonglee
  */
-public enum TransferType {
+public enum AccountOperationType {
 
-    IN(1, "转入"),
+    DEPOSIT(1, "充值"),
 
-    OUT(2, "转出");
+    TRANSFER(2, "转账"),
+
+    WITHDRAW(3, "提现");
 
     private Integer key;
 
     private String value;
 
-    TransferType(Integer key, String value) {
+    AccountOperationType(Integer key, String value) {
         this.key = key;
         this.value = value;
     }
 
-    public static TransferType getTransferTypeByKey(Integer key) {
+    public static AccountOperationType getAccountOperationTypeByKey(Integer key) {
         if (Objects.isNull(key)) {
             throw new BizzRuntimeException("枚举值不能为空！");
         }
-        for (TransferType transactionType : TransferType.values()) {
+        for (AccountOperationType transactionType : AccountOperationType.values()) {
             if (transactionType.getKey().equals(key)) {
                 return transactionType;
             }

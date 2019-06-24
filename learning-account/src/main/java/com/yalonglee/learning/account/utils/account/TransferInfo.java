@@ -4,6 +4,9 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Data;
 
+/**
+ * @author yalonglee
+ */
 @Data
 @Builder
 public class TransferInfo {
@@ -16,6 +19,9 @@ public class TransferInfo {
 
     @ApiModelProperty(value = "金额，单位：分", dataType = "Double")
     private Double amount;
+
+    @ApiModelProperty(value = "账户操作类型 1充值 2转账 3提现", dataType = "Integer")
+    private Integer accountOperationType;
 
     @ApiModelProperty(value = "转账类型 1转入 2转出", dataType = "Integer")
     private Integer transferType;
