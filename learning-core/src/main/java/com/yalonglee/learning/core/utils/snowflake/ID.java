@@ -1,14 +1,15 @@
 package com.yalonglee.learning.core.utils.snowflake;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
+/**
+ * @author yalonglee
+ */
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Builder
 public class ID implements Serializable {
 
     private static final long serialVersionUid = 1L;

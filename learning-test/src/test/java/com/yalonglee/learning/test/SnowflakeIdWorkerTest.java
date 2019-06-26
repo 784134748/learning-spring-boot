@@ -2,6 +2,7 @@ package com.yalonglee.learning.test;
 
 import com.google.common.collect.Sets;
 import com.yalonglee.learning.core.utils.snowflake.SnowflakeIdWorker;
+import com.yalonglee.learning.core.utils.snowflake.SnowflakeNumberWorker;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
 import org.junit.Before;
@@ -15,6 +16,9 @@ public class SnowflakeIdWorkerTest extends LearningTestApplicationTests {
 
     @Autowired
     private SnowflakeIdWorker snowflakeIdWorker;
+
+    @Autowired
+    private SnowflakeNumberWorker snowflakeNumberWorker;
 
     private Set<Long> set;
 
@@ -100,9 +104,11 @@ public class SnowflakeIdWorkerTest extends LearningTestApplicationTests {
     private void loop(int idNum) {
         long start = System.currentTimeMillis();
         for (int i = 0; i < idNum; i++) {
-            long id = snowflakeIdWorker.genId();
             //日志输出消耗极大（无日志4000/ms，有日志6/ms）
-            //log.info("{}{}", i, id);
+            long id = snowflakeIdWorker.genId();
+            log.info("{}:{}", i, id);
+            String number = snowflakeNumberWorker.genNumber();
+            log.info("{}:{}", i, number);
         }
         long duration = System.currentTimeMillis() - start;
         log.info("total time: {}ms, speed is: {}/ms", duration, idNum / duration);
