@@ -10,20 +10,62 @@ import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.rendering.ImageType;
+import org.apache.pdfbox.rendering.PDFRenderer;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 
 public class PdfUtil {
 
+    /**
+     * 标题字体大小
+     */
+    private static final int TITLE_FONT_SIZE = 11;
+    /**
+     * 属性字体大小
+     */
+    private static final int PROPERTY_FONT_SIZE = 7;
+    /**
+     * 图片大小
+     */
+    private static final float IMAGE_SIZE = 90.00F;
+    /**
+     * 图片相对位置X轴
+     */
+    private static final float ABSOLUTE_POSITION_X = 450.00F;
+    /**
+     * 图片相对位置Y轴
+     */
+    private static final float ABSOLUTE_POSITION_Y = 690.00F;
+    /**
+     * 标题前间距大小
+     */
+    private static final float TITLE_SPACING_BEFORE = 10.00F;
+    /**
+     * 标题后间距大小
+     */
+    private static final float TITLE_SPACING_AFTER = 8.00F;
+    /**
+     * 属性间间距大小
+     */
+    private static final float PROPERTY_FIXED_HEIGHT = 15.00F;
+    /**
+     * 尺寸间间距大小
+     */
+    private static final float SIZE_FIXED_HEIGHT = 15.00F;
+    /**
+     * 尺寸标题间距大小
+     */
+    private static final float SIZE_TITLE_FIXED_HEIGHT = 20.00F;
+
     public static void main(String[] args) throws Exception {
         createPDF();
-
     }
 
     /**
@@ -40,13 +82,16 @@ public class PdfUtil {
         Rectangle rect = new Rectangle(PageSize.A4);
         //创建文档实例
         Document doc = new Document(rect);
+        ByteArrayOutputStream pdfOutputStream = new ByteArrayOutputStream();
         //创建输出流
+//        PdfWriter.getInstance(doc, pdfOutputStream);
         PdfWriter.getInstance(doc, new FileOutputStream(new File(outPath)));
 
         doc.open();
         doc.newPage();
 
-        createImage(doc);
+        String imagePath = "/Users/yalonglee/Desktop/二维码.png";
+        createImage(doc, imagePath);
 
         createTitle(doc, "商品信息");
         LinkedHashMap<String, String> merchandiseInfo = Maps.newLinkedHashMap();
@@ -136,7 +181,22 @@ public class PdfUtil {
         sizeInfo.put("颈围(净)", "10.00;10.00");
         createSize(doc, sizeInfo);
 
+        createTitle(doc, "体型调整及备注");
+        LinkedHashMap<String, String> shapeInfo = Maps.newLinkedHashMap();
+        shapeInfo.put("垫肩", "垫肩:0.5");
+        shapeInfo.put("备注", "垫肩:0.5");
+        createText(doc, shapeInfo);
         doc.close();
+
+        ByteArrayInputStream pdfInputStream = StreamConvertUtil.parse(pdfOutputStream);
+        PDDocument pdDocument = PDDocument.load(pdfInputStream);
+        int pageCount = pdDocument.getNumberOfPages();
+        PDFRenderer pdfRenderer = new PDFRenderer(pdDocument);
+        for (int pageIndex = 0; pageIndex < pageCount; pageIndex++) {
+            BufferedImage image = pdfRenderer.renderImageWithDPI(pageIndex, 420, ImageType.RGB);
+            ImageIO.write(image, "png", new File("/Users/yalonglee/Desktop/picture.png"));
+        }
+        pdDocument.close();
         return outPath;
     }
 
@@ -150,7 +210,7 @@ public class PdfUtil {
         //添加中文字体
         BaseFont bfChinese = BaseFont.createFont("STSong-Light", "UniGB-UCS2-H", BaseFont.NOT_EMBEDDED);
         //正常
-        Font textFont = new Font(bfChinese, 15, Font.NORMAL);
+        Font textFont = new Font(bfChinese, TITLE_FONT_SIZE, Font.NORMAL);
 
         //段落（标题）
         Paragraph title = new Paragraph();
@@ -162,8 +222,8 @@ public class PdfUtil {
         //缩进
         title.setIndentationLeft(-10.00F);
         //字体间距
-        title.setSpacingBefore(20.00F);
-        title.setSpacingAfter(10.00F);
+        title.setSpacingBefore(TITLE_SPACING_BEFORE);
+        title.setSpacingAfter(TITLE_SPACING_AFTER);
         //边距
 
         content.add(contentInfo);
@@ -221,16 +281,70 @@ public class PdfUtil {
 
     /**
      * 创建图片
+     *
+     * @param doc
+     * @throws IOException
      */
-    private static void createImage(Document doc) throws IOException {
+    private static void createImage(Document doc, String imagePath) throws IOException {
 
-        Image image = Image.getInstance("/Users/yalonglee/Desktop/二维码.png");
+        Image image = Image.getInstance(imagePath);
         //图片大小
-        image.scaleToFit(100.00F, 100.00F);
+        image.scaleToFit(IMAGE_SIZE, IMAGE_SIZE);
         //图片位置
-        image.setAbsolutePosition(450.00F, 670.00F);
+        image.setAbsolutePosition(ABSOLUTE_POSITION_X, ABSOLUTE_POSITION_Y);
 
         doc.add(image);
+    }
+
+    /**
+     * 创建文本框
+     *
+     * @param doc
+     * @param contents
+     * @throws IOException
+     */
+    private static void createText(Document doc, LinkedHashMap<String, String> contents) throws IOException {
+        //添加中文字体
+        BaseFont bfChinese = BaseFont.createFont("STSong-Light", "UniGB-UCS2-H", BaseFont.NOT_EMBEDDED);
+        //正常
+        Font textFont = new Font(bfChinese, PROPERTY_FONT_SIZE, Font.NORMAL);
+
+        PdfPCell cell;
+        for (String key : contents.keySet()) {
+            // 创建表格
+            PdfPTable table = new PdfPTable(2);
+            table.setHorizontalAlignment(Cell.ALIGN_LEFT);
+            //设置列宽
+            table.setTotalWidth(new float[]{50.00F, 480.00F});
+            //锁定列宽
+            table.setLockedWidth(true);
+            table.setSpacingBefore(15.00F);
+
+            //短语（名称）
+            Phrase name = new Phrase(key, textFont);
+            cell = new PdfPCell(name);
+            cell.setFixedHeight(60.00F);
+            //设置可以居中
+            cell.setUseAscender(true);
+            //设置水平居右
+            cell.setHorizontalAlignment(Cell.ALIGN_CENTER);
+            //设置垂直居中
+            cell.setVerticalAlignment(Cell.ALIGN_MIDDLE);
+            table.addCell(cell);
+
+            //短语（内容）
+            Phrase content = new Phrase(contents.get(key), textFont);
+            cell = new PdfPCell(content);
+            cell.setFixedHeight(60.00F);
+            //设置可以居中
+            cell.setUseAscender(true);
+            //设置水平居右
+            cell.setHorizontalAlignment(Cell.ALIGN_LEFT);
+            //设置垂直居中
+            cell.setVerticalAlignment(Cell.ALIGN_TOP);
+            table.addCell(cell);
+            doc.add(table);
+        }
     }
 
     /**
@@ -251,7 +365,7 @@ public class PdfUtil {
         //添加中文字体
         BaseFont bfChinese = BaseFont.createFont("STSong-Light", "UniGB-UCS2-H", BaseFont.NOT_EMBEDDED);
         //正常
-        Font textFont = new Font(bfChinese, 10, Font.NORMAL);
+        Font textFont = new Font(bfChinese, PROPERTY_FONT_SIZE, Font.NORMAL);
 
         //段落（属性键值对）
         Paragraph size = new Paragraph();
@@ -290,7 +404,7 @@ public class PdfUtil {
             Chunk keyStr = new Chunk(key + "：", textFont);
             Chunk valueStr = new Chunk(contents.get(key), textFont);
             if (contents.get(key).length() + key.length() > length) {
-                valueStr.setTextRise(8.00F);
+                //长度过长时处理
             }
 
             content.add(keyStr);
@@ -299,7 +413,7 @@ public class PdfUtil {
             cell = new PdfPCell();
             cell.setNoWrap(true);
             cell.setBorder(0);
-            cell.setFixedHeight(25.00F);
+            cell.setFixedHeight(PROPERTY_FIXED_HEIGHT);
             //设置可以居中
             cell.setUseAscender(true);
             //设置水平居右
@@ -309,21 +423,31 @@ public class PdfUtil {
             cell.addElement(content);
             table.addCell(cell);
         }
-        //补足单元格
+        //取余
         int remainder = contents.size() % numColumns;
-        for (int i = 0; i < numColumns - remainder; i++) {
+        int supplement = 0;
+        //最后一行单元格未填充完整
+        if (remainder != 0) {
+            supplement = numColumns - remainder;
+        }
+        //商品详情属性数量少于8个
+        if (contents.size() < 8 && numColumns == 2) {
+            supplement = 8 - contents.size();
+        }
+
+        for (int i = 0; i < supplement; i++) {
             //短语（标题内容）
             Phrase content = new Phrase();
             //块（标题内容信息）
-            Chunk contentInfo = new Chunk("", textFont);
-            Chunk contentInfo2 = new Chunk("", textFont);
+            Chunk keyStr = new Chunk("", textFont);
+            Chunk valueStr = new Chunk("", textFont);
 
-            content.add(contentInfo);
-            content.add(contentInfo2);
+            content.add(keyStr);
+            content.add(valueStr);
 
             cell = new PdfPCell();
             cell.setBorder(0);
-            cell.setFixedHeight(25.00F);
+            cell.setFixedHeight(PROPERTY_FIXED_HEIGHT);
             //设置可以居中
             cell.setUseAscender(true);
             //设置水平居右
@@ -333,6 +457,7 @@ public class PdfUtil {
             cell.addElement(content);
             table.addCell(cell);
         }
+
 
         size.add(table);
         doc.add(size);
@@ -350,9 +475,9 @@ public class PdfUtil {
         //添加中文字体
         BaseFont bfChinese = BaseFont.createFont("STSong-Light", "UniGB-UCS2-H", BaseFont.NOT_EMBEDDED);
         //正常
-        Font textFont = new Font(bfChinese, 10, Font.NORMAL);
+        Font textFont = new Font(bfChinese, PROPERTY_FONT_SIZE, Font.NORMAL);
         //斜体
-        Font italicFont = new Font(bfChinese, 10, Font.ITALIC);
+        Font italicFont = new Font(bfChinese, PROPERTY_FONT_SIZE, Font.ITALIC);
 
         //段落（属性键值对）
         Paragraph size = new Paragraph();
@@ -383,7 +508,7 @@ public class PdfUtil {
             if (StringUtils.isNoneBlank(key)) {
                 cell.setBorderWidthRight(0.01F);
             }
-            cell.setFixedHeight(25.00F);
+            cell.setFixedHeight(SIZE_TITLE_FIXED_HEIGHT);
             //设置可以居中
             cell.setUseAscender(true);
             //设置水平居右
@@ -404,7 +529,7 @@ public class PdfUtil {
                 cell.setBorderWidthRight(0.01F);
             }
             cell.setBorderWidthTop(1.30F);
-            cell.setFixedHeight(15.00F);
+            cell.setFixedHeight(SIZE_FIXED_HEIGHT);
             //设置可以居中
             cell.setUseAscender(true);
             //设置水平居右
@@ -423,7 +548,7 @@ public class PdfUtil {
             if (StringUtils.isNoneBlank(key)) {
                 cell.setBorderWidthRight(0.01F);
             }
-            cell.setFixedHeight(15.00F);
+            cell.setFixedHeight(SIZE_FIXED_HEIGHT);
             //设置可以居中
             cell.setUseAscender(true);
             //设置水平居右
