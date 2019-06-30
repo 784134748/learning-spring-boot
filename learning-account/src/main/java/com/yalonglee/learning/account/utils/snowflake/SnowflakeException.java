@@ -28,23 +28,6 @@ public class SnowflakeException extends RuntimeException {
     private static final long serialVersionUID = -27048199131316992L;
 
     /**
-     * Default constructor
-     */
-    public SnowflakeException() {
-        super();
-    }
-
-    /**
-     * Constructor with message & cause
-     *
-     * @param message
-     * @param cause
-     */
-    public SnowflakeException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    /**
      * Constructor with message
      *
      * @param message
@@ -61,15 +44,6 @@ public class SnowflakeException extends RuntimeException {
      */
     public SnowflakeException(String msgFormat, Object... args) {
         super(String.format(msgFormat, args));
-    }
-
-    /**
-     * Constructor with cause
-     *
-     * @param cause
-     */
-    public SnowflakeException(Throwable cause) {
-        super(cause);
     }
 
 }

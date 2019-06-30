@@ -18,6 +18,10 @@ public enum AccountOperation {
      */
     INSERT_NEW_ACCOUNT_RECORD_INFO_LIST,
     /**
+     * 更新最后一条账户记录
+     */
+    UPDATE_LAST_ACCOUNT_RECORD_INFO,
+    /**
      * 新增的转账记录
      */
     INSERT_NEW_TRANSFER_INFO_LIST

@@ -8,52 +8,48 @@
         <constructor>
             <idArg column='id' javaType='java.lang.Long'/>
             <arg column='serial_number' javaType='java.lang.String'/>
-            <arg column='target_id' javaType='java.lang.Long'/>
-            <arg column='transaction_from' javaType='java.lang.Integer'/>
-            <arg column='currency_base_uuid' javaType='java.lang.String'/>
+            <arg column='account_operation_type' javaType='java.lang.Integer'/>
             <arg column='account_record_id' javaType='java.lang.Long'/>
             <arg column='account_record_index' javaType='java.lang.Integer'/>
-            <arg column='from_account_record_id' javaType='java.lang.Long'/>
-            <arg column='from_account_record_index' javaType='java.lang.Integer'/>
+            <arg column='source_account_record_id' javaType='java.lang.Long'/>
+            <arg column='source_account_record_index' javaType='java.lang.Integer'/>
             <arg column='account_addr' javaType='java.lang.String'/>
-            <arg column='available_amount' javaType='java.lang.Double'/>
-            <arg column='frozen_amount' javaType='java.lang.Double'/>
+            <arg column='account_record_available_amount' javaType='java.lang.Double'/>
+            <arg column='account_record_frozen_amount' javaType='java.lang.Double'/>
             <arg column='gmt_create' javaType='java.time.LocalDateTime'/>
             <arg column='gmt_modified' javaType='java.time.LocalDateTime'/>
         </constructor>
         <result property='id' column='id'/>
         <result property='serialNumber' column='serial_number'/>
-        <result property='targetId' column='target_id'/>
-        <result property='transactionFrom' column='transaction_from'/>
-        <result property='currencyBaseUuid' column='currency_base_uuid'/>
+        <result property='accountOperationType' column='account_operation_type'/>
         <result property='accountRecordId' column='account_record_id'/>
         <result property='accountRecordIndex' column='account_record_index'/>
-        <result property='fromAccountRecordId' column='from_account_record_id'/>
-        <result property='fromAccountRecordIndex' column='from_account_record_index'/>
+        <result property='sourceAccountRecordId' column='source_account_record_id'/>
+        <result property='sourceAccountRecordIndex' column='source_account_record_index'/>
         <result property='accountAddr' column='account_addr'/>
-        <result property='availableAmount' column='available_amount'/>
-        <result property='frozenAmount' column='frozen_amount'/>
+        <result property='accountRecordAvailableAmount' column='account_record_available_amount'/>
+        <result property='accountRecordFrozenAmount' column='account_record_frozen_amount'/>
         <result property='gmtCreate' column='gmt_create'/>
         <result property='gmtModified' column='gmt_modified'/>
     </resultMap>
 
     <sql id='Base_Column_List'>
-    account_log.`id`, account_log.`serial_number`, account_log.`target_id`, account_log.`transaction_from`, account_log.`currency_base_uuid`, account_log.`account_record_id`, account_log.`account_record_index`, account_log.`from_account_record_id`, account_log.`from_account_record_index`, account_log.`account_addr`, account_log.`available_amount`, account_log.`frozen_amount`, account_log.`gmt_create`, account_log.`gmt_modified`
+    account_log.`id`, account_log.`serial_number`, account_log.`account_operation_type`, account_log.`account_record_id`, account_log.`account_record_index`, account_log.`source_account_record_id`, account_log.`source_account_record_index`, account_log.`account_addr`, account_log.`account_record_available_amount`, account_log.`account_record_frozen_amount`, account_log.`gmt_create`, account_log.`gmt_modified`
     </sql>
 
     <select id='selectByPrimaryKey' resultMap='BaseResultMap'
             parameterType='java.lang.Long'>
-        select 
+        select
         <include refid='Base_Column_List'/>
-        from account_log 
+        from account_log
         where account_log.`id` = #{id}
     </select>
 
     <select id='selectOneByQuery' resultMap='BaseResultMap'
             parameterType='com.yalonglee.learning.account.model.AccountLogModel'>
-        select 
+        select
         <include refid='Base_Column_List'/>
-        from account_log 
+        from account_log
         <where>
             <include refid='query_filter'/>
         </where>
@@ -61,9 +57,9 @@
     </select>
 
     <select id='selectByQuery' resultMap='BaseResultMap'>
-        select 
+        select
         <include refid='Base_Column_List'/>
-        from account_log 
+        from account_log
         <where>
             <include refid='query_filter'/>
         </where>
@@ -82,44 +78,42 @@
         </where>
     </delete>
 
-    <select id='count' resultType='java.lang.Integer' parameterType='com.yalonglee.learning.account.model.AccountLogModel'>
+    <select id='count' resultType='java.lang.Integer'
+            parameterType='com.yalonglee.learning.account.model.AccountLogModel'>
         select count(*) from account_log
         <where>
             <include refid='query_filter'/>
         </where>
     </select>
 
-    <insert id='insert' parameterType='com.yalonglee.learning.account.model.AccountLogModel' useGeneratedKeys='true' keyProperty='id'>
+    <insert id='insert' parameterType='com.yalonglee.learning.account.model.AccountLogModel' useGeneratedKeys='true'
+            keyProperty='id'>
         insert into account_log
         <trim prefix='(' suffix=')' suffixOverrides=','>
             <if test='id != null'>account_log.`id`,</if>
             <if test='serialNumber != null'>account_log.`serial_number`,</if>
-            <if test='targetId != null'>account_log.`target_id`,</if>
-            <if test='transactionFrom != null'>account_log.`transaction_from`,</if>
-            <if test='currencyBaseUuid != null'>account_log.`currency_base_uuid`,</if>
+            <if test='accountOperationType != null'>account_log.`account_operation_type`,</if>
             <if test='accountRecordId != null'>account_log.`account_record_id`,</if>
             <if test='accountRecordIndex != null'>account_log.`account_record_index`,</if>
-            <if test='fromAccountRecordId != null'>account_log.`from_account_record_id`,</if>
-            <if test='fromAccountRecordIndex != null'>account_log.`from_account_record_index`,</if>
+            <if test='sourceAccountRecordId != null'>account_log.`source_account_record_id`,</if>
+            <if test='sourceAccountRecordIndex != null'>account_log.`source_account_record_index`,</if>
             <if test='accountAddr != null'>account_log.`account_addr`,</if>
-            <if test='availableAmount != null'>account_log.`available_amount`,</if>
-            <if test='frozenAmount != null'>account_log.`frozen_amount`,</if>
+            <if test='accountRecordAvailableAmount != null'>account_log.`account_record_available_amount`,</if>
+            <if test='accountRecordFrozenAmount != null'>account_log.`account_record_frozen_amount`,</if>
             account_log.`gmt_create`,
             account_log.`gmt_modified`,
         </trim>
         <trim prefix='values (' suffix=')' suffixOverrides=','>
             <if test='id != null'>#{id},</if>
             <if test='serialNumber != null'>#{serialNumber},</if>
-            <if test='targetId != null'>#{targetId},</if>
-            <if test='transactionFrom != null'>#{transactionFrom},</if>
-            <if test='currencyBaseUuid != null'>#{currencyBaseUuid},</if>
+            <if test='accountOperationType != null'>#{accountOperationType},</if>
             <if test='accountRecordId != null'>#{accountRecordId},</if>
             <if test='accountRecordIndex != null'>#{accountRecordIndex},</if>
-            <if test='fromAccountRecordId != null'>#{fromAccountRecordId},</if>
-            <if test='fromAccountRecordIndex != null'>#{fromAccountRecordIndex},</if>
+            <if test='sourceAccountRecordId != null'>#{sourceAccountRecordId},</if>
+            <if test='sourceAccountRecordIndex != null'>#{sourceAccountRecordIndex},</if>
             <if test='accountAddr != null'>#{accountAddr},</if>
-            <if test='availableAmount != null'>#{availableAmount},</if>
-            <if test='frozenAmount != null'>#{frozenAmount},</if>
+            <if test='accountRecordAvailableAmount != null'>#{accountRecordAvailableAmount},</if>
+            <if test='accountRecordFrozenAmount != null'>#{accountRecordFrozenAmount},</if>
             now(),
             now(),
         </trim>
@@ -129,16 +123,14 @@
         update account_log
         <set>
             account_log.`serial_number` = #{serialNumber},
-            account_log.`target_id` = #{targetId},
-            account_log.`transaction_from` = #{transactionFrom},
-            account_log.`currency_base_uuid` = #{currencyBaseUuid},
+            account_log.`account_operation_type` = #{accountOperationType},
             account_log.`account_record_id` = #{accountRecordId},
             account_log.`account_record_index` = #{accountRecordIndex},
-            account_log.`from_account_record_id` = #{fromAccountRecordId},
-            account_log.`from_account_record_index` = #{fromAccountRecordIndex},
+            account_log.`source_account_record_id` = #{sourceAccountRecordId},
+            account_log.`source_account_record_index` = #{sourceAccountRecordIndex},
             account_log.`account_addr` = #{accountAddr},
-            account_log.`available_amount` = #{availableAmount},
-            account_log.`frozen_amount` = #{frozenAmount},
+            account_log.`account_record_available_amount` = #{accountRecordAvailableAmount},
+            account_log.`account_record_frozen_amount` = #{accountRecordFrozenAmount},
             account_log.`gmt_modified` = now(),
         </set>
         where account_log.id = #{id}
@@ -148,16 +140,22 @@
         update account_log
         <set>
             <if test='serialNumber != null'>account_log.`serial_number` = #{serialNumber},</if>
-            <if test='targetId != null'>account_log.`target_id` = #{targetId},</if>
-            <if test='transactionFrom != null'>account_log.`transaction_from` = #{transactionFrom},</if>
-            <if test='currencyBaseUuid != null'>account_log.`currency_base_uuid` = #{currencyBaseUuid},</if>
+            <if test='accountOperationType != null'>account_log.`account_operation_type` = #{accountOperationType},</if>
             <if test='accountRecordId != null'>account_log.`account_record_id` = #{accountRecordId},</if>
             <if test='accountRecordIndex != null'>account_log.`account_record_index` = #{accountRecordIndex},</if>
-            <if test='fromAccountRecordId != null'>account_log.`from_account_record_id` = #{fromAccountRecordId},</if>
-            <if test='fromAccountRecordIndex != null'>account_log.`from_account_record_index` = #{fromAccountRecordIndex},</if>
+            <if test='sourceAccountRecordId != null'>account_log.`source_account_record_id` =
+                #{sourceAccountRecordId},
+            </if>
+            <if test='sourceAccountRecordIndex != null'>account_log.`source_account_record_index` =
+                #{sourceAccountRecordIndex},
+            </if>
             <if test='accountAddr != null'>account_log.`account_addr` = #{accountAddr},</if>
-            <if test='availableAmount != null'>account_log.`available_amount` = #{availableAmount},</if>
-            <if test='frozenAmount != null'>account_log.`frozen_amount` = #{frozenAmount},</if>
+            <if test='accountRecordAvailableAmount != null'>account_log.`account_record_available_amount` =
+                #{accountRecordAvailableAmount},
+            </if>
+            <if test='accountRecordFrozenAmount != null'>account_log.`account_record_frozen_amount` =
+                #{accountRecordFrozenAmount},
+            </if>
             account_log.`gmt_modified` = now(),
         </set>
         where account_log.`id` = #{id}
@@ -166,20 +164,60 @@
     <sql id='query_filter'>
         <if test='t.id != null'>and account_log.`id` = #{t.id}</if>
         <if test='t.serialNumber != null'>and account_log.`serial_number` = #{t.serialNumber}</if>
-        <if test='t.targetId != null'>and account_log.`target_id` = #{t.targetId}</if>
-        <if test='t.transactionFrom != null'>and account_log.`transaction_from` = #{t.transactionFrom}</if>
-        <if test='t.currencyBaseUuid != null'>and account_log.`currency_base_uuid` = #{t.currencyBaseUuid}</if>
+        <if test='t.accountOperationType != null'>and account_log.`account_operation_type` = #{t.accountOperationType}
+        </if>
         <if test='t.accountRecordId != null'>and account_log.`account_record_id` = #{t.accountRecordId}</if>
         <if test='t.accountRecordIndex != null'>and account_log.`account_record_index` = #{t.accountRecordIndex}</if>
-        <if test='t.fromAccountRecordId != null'>and account_log.`from_account_record_id` = #{t.fromAccountRecordId}</if>
-        <if test='t.fromAccountRecordIndex != null'>and account_log.`from_account_record_index` = #{t.fromAccountRecordIndex}</if>
+        <if test='t.sourceAccountRecordId != null'>and account_log.`source_account_record_id` =
+            #{t.sourceAccountRecordId}
+        </if>
+        <if test='t.sourceAccountRecordIndex != null'>and account_log.`source_account_record_index` =
+            #{t.sourceAccountRecordIndex}
+        </if>
         <if test='t.accountAddr != null'>and account_log.`account_addr` = #{t.accountAddr}</if>
-        <if test='t.availableAmount != null'>and account_log.`available_amount` = #{t.availableAmount}</if>
-        <if test='t.frozenAmount != null'>and account_log.`frozen_amount` = #{t.frozenAmount}</if>
+        <if test='t.accountRecordAvailableAmount != null'>and account_log.`account_record_available_amount` =
+            #{t.accountRecordAvailableAmount}
+        </if>
+        <if test='t.accountRecordFrozenAmount != null'>and account_log.`account_record_frozen_amount` =
+            #{t.accountRecordFrozenAmount}
+        </if>
         <if test='t.gmtCreate != null'>and account_log.`gmt_create` = #{t.gmtCreate}</if>
         <if test='t.gmtModified != null'>and account_log.`gmt_modified` = #{t.gmtModified}</if>
     </sql>
 
     <!--一串华丽的分割线,分割线内禁止任何形式的修改-->
+
+    <insert id='batchInsert'>
+        insert into account_log
+        <trim prefix='(' suffix=')' suffixOverrides=','>
+            account_log.id,
+            account_log.`serial_number`,
+            account_log.`account_operation_type`,
+            account_log.`account_record_id`,
+            account_log.`account_record_index`,
+            account_log.`source_account_record_id`,
+            account_log.`source_account_record_index`,
+            account_log.`account_addr`,
+            account_log.`account_record_available_amount`,
+            account_log.`account_record_frozen_amount`,
+            account_log.`gmt_create`,
+            account_log.`gmt_modified`,
+        </trim>
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.id},
+            #{item.serialNumber},
+            #{item.accountOperationType},
+            #{item.accountRecordId},
+            #{item.accountRecordIndex},
+            #{item.sourceAccountRecordId},
+            #{item.sourceAccountRecordIndex},
+            #{item.accountAddr},
+            #{item.availableAmount},
+            #{item.frozenAmount},
+            now(),
+            now())
+        </foreach>
+    </insert>
 
 </mapper>

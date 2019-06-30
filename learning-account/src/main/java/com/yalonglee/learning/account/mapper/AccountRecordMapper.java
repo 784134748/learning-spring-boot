@@ -1,5 +1,6 @@
 package com.yalonglee.learning.account.mapper;
 
+import com.yalonglee.learning.account.model.AccountRecordModel;
 import com.yalonglee.learning.account.utils.account.CompleteTransferAccountRecordInfo;
 import com.yalonglee.learning.account.mapper.base.AccountBaseMapper;
 import com.yalonglee.learning.account.utils.account.AccountRecordInfo;
@@ -12,16 +13,16 @@ import java.util.List;
  * @author
  */
 @Repository
-public interface AccountRecordMapper extends AccountBaseMapper<AccountRecordInfo> {
+public interface AccountRecordMapper extends AccountBaseMapper<AccountRecordModel> {
 
     /**
-     * 获取转账消耗的的账户记录
+     * 获取能够完成本次交易的账户记录列表
      *
      * @param accountAddr
      * @param amount
      * @return
      */
-    List<CompleteTransferAccountRecordInfo> payment(@Param("accountAddr") String accountAddr, @Param("amount") Double amount);
+    List<CompleteTransferAccountRecordInfo> queryCompleteTransferAccountRecordInfoList(@Param("accountAddr") String accountAddr, @Param("amount") Double amount);
 
     /**
      * 批量插入账户记录
@@ -35,6 +36,6 @@ public interface AccountRecordMapper extends AccountBaseMapper<AccountRecordInfo
      *
      * @param ids 待更新记录的id
      */
-    void batchUpdateAmount(@Param("ids") List<Long> ids);
+    void batchUpdateAvailableAmountToZero(@Param("ids") List<Long> ids);
 
 }

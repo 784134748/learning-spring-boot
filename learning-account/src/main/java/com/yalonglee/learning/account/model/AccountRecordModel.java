@@ -24,11 +24,8 @@ public class AccountRecordModel extends AccountBaseModel implements Serializable
     @ApiModelProperty(value = "主键id 无符号 雪花算法", dataType = "Long", hidden = true)
     private Long id;
 
-    @ApiModelProperty(value = "流水号;不同来源的金额，流水号前缀不一致，例如：资助=ZZ", dataType = "String")
+    @ApiModelProperty(value = "流水号", dataType = "String")
     private String serialNumber;
-
-    @ApiModelProperty(value = "创世货币uuid", dataType = "String")
-    private String currencyBaseUuid;
 
     @ApiModelProperty(value = "账户地址", dataType = "String")
     private String accountAddr;
@@ -43,7 +40,12 @@ public class AccountRecordModel extends AccountBaseModel implements Serializable
     private Integer index;
 
     @ApiModelProperty(value = "资金来源于该账户地址", dataType = "String")
-    private String fromAccountAddr;
+    private String sourceAccountAddr;
+
+    @ApiModelProperty(value = "生效时间", dataType = "java.time.LocalDateTime")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private java.time.LocalDateTime gmtEffect;
 
     @ApiModelProperty(value = "创建时间", dataType = "java.time.LocalDateTime", hidden = true)
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")

@@ -272,7 +272,8 @@ public class AccountUtil {
                 if ((!iterator.hasNext()) && lastAccountRecord == null) {
                     AccountRecordInfo accountRecordTmp = AccountRecordInfo.builder()
                             .id(payment.getAccountRecordId())
-                            .availableAmount(payment.getSumAccountRecordAvailableAmount() - total)
+                            .accountRecordAvailableAmount(payment.getSumAccountRecordAvailableAmount() - total)
+                            .index(payment.getIndex() + 1)
                             .build();
                     lastAccountRecord = accountRecordTmp;
                 }
@@ -316,6 +317,7 @@ public class AccountUtil {
         operation.put(AccountOperation.INSERT_NEW_ACCOUNT_LOG_INFO_LIST, insertNewAccountLogInfoList);
         operation.put(AccountOperation.INSERT_NEW_ACCOUNT_RECORD_INFO_LIST, insertNewAccountRecordInfoList);
         operation.put(AccountOperation.INSERT_NEW_TRANSFER_INFO_LIST, insertNewTransferInfoList);
+        operation.put(AccountOperation.UPDATE_LAST_ACCOUNT_RECORD_INFO, lastAccountRecord);
 
         return operation;
     }
@@ -348,7 +350,7 @@ public class AccountUtil {
             //新产生账户记录的id
             long accountRecordId = autowiredSnowflakeIdWorker.genId();
             //来源账户记录变更次数
-            int fromAccountRecordIndex = completeTransferAccountRecordInfo.getIndex();
+            int sourceAccountRecordIndex = completeTransferAccountRecordInfo.getIndex();
             //冻结的金额
             double frozenAmount = completeTransferAccountRecordInfo.getAccountRecordFrozenAmount();
             //支付记录剩余的可用金额
@@ -361,39 +363,39 @@ public class AccountUtil {
             double payAvailableAmount = completeTransferAccountRecordInfo.getAccountRecordAvailableAmount() - leftAvailableAmount;
             alreadyTransferAmount += payAvailableAmount;
 
-            log.info("流水号：{},支付记录: 支付记录id【{}】 - 支付记录的可用金额【{}】 - 支付记录消耗的可用金额【{}】 - 支付记录剩余的可用金额【{}】", serialNumber, accountRecordId, completeTransferAccountRecordInfo.getAccountRecordAvailableAmount(), payAvailableAmount, leftAvailableAmount);
+            log.info("流水号：{},支付记录: 支付记录id【{}】 - 支付记录的可用金额【{}】 - 支付记录消耗的可用金额【{}】", serialNumber, accountRecordId, payAvailableAmount);
             //生成新的账户记录
             AccountRecordInfo newAccountRecordInfo = AccountRecordInfo.builder()
                     .id(accountRecordId)
                     .serialNumber(serialNumber)
-                    .accountOperationType(accountOperationType)
-                    .fromAccountAddr(sourceAccountAddr)
+                    .accountRecordOperationType(accountOperationType)
+                    .sourceAccountAddr(sourceAccountAddr)
                     .accountAddr(targetAccountAddr)
                     .index(AccountUtil.SYSTEM_INDEX)
-                    .availableAmount(completeTransferAccountRecordInfo.getAccountRecordAvailableAmount() - leftAvailableAmount)
-                    .frozenAmount(AccountUtil.SYSTEM_DEFINE_AMOUNT_ZERO)
+                    .accountRecordAvailableAmount(completeTransferAccountRecordInfo.getAccountRecordAvailableAmount() - leftAvailableAmount)
+                    .accountRecordFrozenAmount(AccountUtil.SYSTEM_DEFINE_AMOUNT_ZERO)
                     .build();
             insertNewAccountRecordInfoList.add(newAccountRecordInfo);
             //生成账户变更记录(入账账户记录和出账账户记录各一条)
             AccountLogInfo newSourceAccountLogInfo = AccountLogInfo.builder()
                     .id(autowiredSnowflakeIdWorker.genId())
                     .serialNumber(serialNumber)
-                    .fromAccountRecordId(fromAccountRecordId)
+                    .sourceAccountRecordId(fromAccountRecordId)
                     .accountOperationType(accountOperationType)
-                    .fromAccountRecordIndex(fromAccountRecordIndex)
+                    .sourceAccountRecordIndex(sourceAccountRecordIndex)
                     .accountRecordId(fromAccountRecordId)
                     .accountRecordIndex(AccountUtil.SYSTEM_INDEX)
                     .accountAddr(sourceAccountAddr)
-                    .accountRecordIndex(fromAccountRecordIndex + 1)
+                    .accountRecordIndex(sourceAccountRecordIndex + 1)
                     .availableAmount(leftAvailableAmount)
                     .frozenAmount(frozenAmount)
                     .build();
             AccountLogInfo newTargetAccountLogInfo = AccountLogInfo.builder()
                     .id(autowiredSnowflakeIdWorker.genId())
                     .serialNumber(serialNumber)
-                    .fromAccountRecordId(fromAccountRecordId)
+                    .sourceAccountRecordId(fromAccountRecordId)
                     .accountOperationType(accountOperationType)
-                    .fromAccountRecordIndex(fromAccountRecordIndex)
+                    .sourceAccountRecordIndex(sourceAccountRecordIndex)
                     .accountAddr(targetAccountAddr)
                     .accountRecordId(accountRecordId)
                     .accountRecordIndex(SYSTEM_INDEX)

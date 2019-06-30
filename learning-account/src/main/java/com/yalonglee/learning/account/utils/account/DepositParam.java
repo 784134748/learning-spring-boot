@@ -15,10 +15,6 @@ public class DepositParam {
      */
     private String serialNumber;
     /**
-     * 充值账户信息
-     */
-    private AccountInfo depositAccount;
-    /**
      * 充值入账账户地址
      */
     private String targetAccountAddr;

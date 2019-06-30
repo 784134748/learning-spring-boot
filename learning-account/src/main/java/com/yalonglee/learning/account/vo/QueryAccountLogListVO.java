@@ -36,7 +36,7 @@ public class QueryAccountLogListVO {
     private Long fromAccountRecordId;
 
     @ApiModelProperty(value = "资金来源账户记录变更次数", dataType = "Integer")
-    private Integer fromAccountRecordIndex;
+    private Integer sourceAccountRecordIndex;
 
     @ApiModelProperty(value = "该变更记录所属的账户地址", dataType = "String")
     private String accountAddr;

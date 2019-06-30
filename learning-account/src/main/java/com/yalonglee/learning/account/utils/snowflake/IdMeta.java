@@ -1,9 +1,20 @@
 package com.yalonglee.learning.account.utils.snowflake;
 
-import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
-public class IdMeta {
+import lombok.Builder;
+import lombok.Data;
+
+import java.io.Serializable;
+
+/**
+ * @author yalonglee
+ */
+@Data
+@Builder
+public class IdMeta implements Serializable {
+
+    private static final long serialVersionUid = 1L;
+
     /**
      * 开始时间截 (从2015-01-01起)
      */

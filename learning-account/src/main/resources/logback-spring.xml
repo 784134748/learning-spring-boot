@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+
+    <!--日志路径-->
+    <property name="LOG_HOME" value="${LOG_PATH:-.}"/>
+
+    <!--根据profile指定最低日志标准-->
+    <springProfile name="local">
+        <property name="LEVEL" value="INFO"/>
+    </springProfile>
+    <springProfile name="test">
+        <property name="LEVEL" value="INFO"/>
+    </springProfile>
+    <springProfile name="dev">
+        <property name="LEVEL" value="INFO"/>
+    </springProfile>
+    <springProfile name="product">
+        <property name="LEVEL" value="INFO"/>
+    </springProfile>
+
+    <appender name="DEFAULT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--说明：在dev时日志路径为相对路径，如果启动使用的是tomcat，则日志文件在tomcat目录下的log目录中-->
+        <!--如果使用的是jetty，则日志文件在项目模块目录下的log目录中-->
+        <file>${LOG_HOME}/customer-made.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>[%date{yyyy-MM-dd HH:mm:ss}] [ %-5level] [%thread] %logger{96} [%line] - %msg%n</Pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/%d{yyyy-MM-dd}-customer-made.log.zip</fileNamePattern>
+            <maxHistory>15</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="SERVICE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--说明：在dev时日志路径为相对路径，如果启动使用的是tomcat，则日志文件在tomcat目录下的log目录中-->
+        <!--如果使用的是jetty，则日志文件在项目模块目录下的log目录中-->
+        <file>${LOG_HOME}/customer-made-service.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>[%date{yyyy-MM-dd HH:mm:ss}] [ %-5level] [%thread] %logger{96} [%line] - %msg%n</Pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/%d{yyyy-MM-dd}-customer-made-service.log.zip</fileNamePattern>
+            <maxHistory>15</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="MAPPER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--说明：在dev时日志路径为相对路径，如果启动使用的是tomcat，则日志文件在tomcat目录下的log目录中-->
+        <!--如果使用的是jetty，则日志文件在项目模块目录下的log目录中-->
+        <file>${LOG_HOME}/customer-made-mapper.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>[%date{yyyy-MM-dd HH:mm:ss}] [ %-5level] [%thread] %logger{96} [%line] - %msg%n</Pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/%d{yyyy-MM-dd}-customer-made-mapper.log.zip</fileNamePattern>
+            <maxHistory>15</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>[%date{yyyy-MM-dd HH:mm:ss}] [ %-5level] [%thread] %logger{96} [%line] - %msg%n</Pattern>
+        </encoder>
+    </appender>
+
+    <!--输出sql至控制台和日志文件-->
+    <logger name="com.yalonglee.learning.account.mapper" level="DEBUG">
+        <appender-ref ref="MAPPER"/>
+    </logger>
+
+    <!--输出service至控制台和日志文件-->
+    <logger name="com.yalonglee.learning.account.service" level="DEBUG">
+        <appender-ref ref="SERVICE"/>
+    </logger>
+
+    <root level="${LEVEL}">
+        <appender-ref ref="DEFAULT"/>
+    </root>
+</configuration>

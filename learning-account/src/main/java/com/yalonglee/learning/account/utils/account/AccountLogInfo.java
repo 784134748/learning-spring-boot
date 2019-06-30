@@ -28,10 +28,10 @@ public class AccountLogInfo {
     private Integer accountRecordIndex;
 
     @ApiModelProperty(value = "资金来源账户记录id（默认为0，充值的金额不来自任一账户）", dataType = "Long")
-    private Long fromAccountRecordId;
+    private Long sourceAccountRecordId;
 
     @ApiModelProperty(value = "资金来源账户记录变更次数", dataType = "Integer")
-    private Integer fromAccountRecordIndex;
+    private Integer sourceAccountRecordIndex;
 
     @ApiModelProperty(value = "该变更记录所属的账户地址", dataType = "String")
     private String accountAddr;

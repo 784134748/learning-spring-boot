@@ -17,10 +17,6 @@ public class TransferParam {
      */
     String serialNumber;
     /**
-     * 充值账户信息
-     */
-    private AccountInfo transferAccount;
-    /**
      * 转账出账账号地址
      */
     String sourceAccountAddr;

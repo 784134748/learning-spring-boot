@@ -28,26 +28,36 @@ public interface AccountMapper extends AccountBaseMapper<AccountModel> {
      * @param accountAddr
      * @return
      */
-    @Select("select account.id from account where account.id = (select account.id from account where account_addr = #{accountAddr}) for update")
+    @Select("select account.id, account.timestamp_lock as account_timestamp_lock, current_timestamp as account_current_timestamp, account.wait_withdraw_cashes_amount as account_wait_withdraw_cashes_amount from account where account.id = (select account.id from account where account_addr = #{accountAddr}) for update")
     AccountInfo getRecordLock(@Param("accountAddr") String accountAddr);
 
     /**
-     * 根据账户id更新待提现金额
+     * 根据账户地址更新待提现金额
      *
-     * @param id
-     * @param waitWithdrawCashes
+     * @param accountAddr
+     * @param waitWithdrawCashesAmount
      */
-    @Update("update account set wait_withdraw_cashes = #{waitWithdrawCashes} where id = #{id}")
-    void updateWaitWithdrawCashes(@Param("id") Long id, @Param("waitWithdrawCashes") Double waitWithdrawCashes);
+    @Update("update account set wait_withdraw_cashes_amount = #{waitWithdrawCashesAmount} where account.account_addr = #{accountAddr}")
+    void updateWaitWithdrawCashesAmountByAccountAddr(@Param("accountAddr") String accountAddr, @Param("waitWithdrawCashesAmount") Double waitWithdrawCashesAmount);
 
     /**
-     * 根据账户地址查询账户金额
+     * 根据账户地址查询账户信息
      *
      * @param accountAddr
      * @return
      */
-    @Select("select account.account_addr, account.wait_withdraw_cashes_amount, account.timestamp_lock, current_timestamp, sum(account_record.available_amount) as total_available_amount, sum(account_record.frozen_amount) as total_frozen_amount from account, account_record where account.account_addr = #{accountAddr} and account_record.account_id = account.id")
-    AccountInfo getAccountAmountByAccountAddr(@Param("accountAddr") String accountAddr);
+    @Select("select\n" +
+            "account.account_addr,\n" +
+            "account.wait_withdraw_cashes_amount as account_wait_withdraw_cashes_amount,\n" +
+            "account.timestamp_lock as account_timestamp_lock,\n" +
+            "current_timestamp as account_current_timestamp,\n" +
+            "sum(account_record.available_amount) as account_total_available_amount,\n" +
+            "sum(account_record.frozen_amount) as account_total_frozen_amount\n" +
+            "from account, account_record\n" +
+            "where\n" +
+            "account.account_addr = #{accountAddr}\n" +
+            "and account_record.account_addr = account.account_addr")
+    AccountInfo getAccountInfoByAccountAddr(@Param("accountAddr") String accountAddr);
 
 
 }
