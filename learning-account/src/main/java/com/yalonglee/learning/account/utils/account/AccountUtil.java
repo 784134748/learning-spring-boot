@@ -421,11 +421,15 @@ public class AccountUtil {
                     .build();
             insertNewAccountLogInfoList.add(newSourceAccountLogInfo);
             insertNewAccountLogInfoList.add(newTargetAccountLogInfo);
+            //一对一转账第一条账户记录变更日志id
+            final long firstInsertNewAccountLogInfoId = newSourceAccountLogInfo.getId();
             //完成转账
             if (leftAvailableAmount >= AccountUtil.SYSTEM_DEFINE_AMOUNT_ZERO) {
+                //一对一转账最后一条账户记录变更日志id
+                final long lastInsertNewAccountLogInfoId = insertNewAccountLogInfoList.get(insertNewAccountLogInfoList.size() - 1).getId();
                 //生成转账记录(入账账户记录和出账账户记录各一条)
                 TransferInfo newSourceTransferInfo = TransferInfo.builder()
-                        .id(autowiredSnowflakeIdWorker.genId())
+                        .id(firstInsertNewAccountLogInfoId)
                         .serialNumber(serialNumber)
                         .accountOperationType(accountOperationType)
                         .amount(totalTransferAmount)
@@ -435,7 +439,7 @@ public class AccountUtil {
                         .transferType(TransferType.OUT.getKey())
                         .build();
                 TransferInfo newTargetTransferInfo = TransferInfo.builder()
-                        .id(autowiredSnowflakeIdWorker.genId())
+                        .id(lastInsertNewAccountLogInfoId)
                         .serialNumber(serialNumber)
                         .accountOperationType(accountOperationType)
                         .amount(totalTransferAmount)

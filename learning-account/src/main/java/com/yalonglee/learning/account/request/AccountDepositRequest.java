@@ -9,7 +9,6 @@ import lombok.Data;
 @Data
 @Builder
 public class AccountDepositRequest {
-
     /**
      * 流水号
      */
