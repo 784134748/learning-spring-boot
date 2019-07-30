@@ -1,0 +1,6 @@
+[2019-07-30 12:35:07] [ DEBUG] [http-nio-8080-exec-1] com.yalonglee.learning.account.mapper.AccountMapper.selectOneByQuery [159] - ==>  Preparing: select account.`id`, account.`account_addr`, account.`timestamp_lock`, account.`wait_withdraw_cashes_amount`, account.`gmt_create`, account.`gmt_modified` from account WHERE account.`account_addr` = ? Limit 1 
+[2019-07-30 12:35:07] [ DEBUG] [http-nio-8080-exec-1] com.yalonglee.learning.account.mapper.AccountMapper.selectOneByQuery [159] - ==> Parameters: 123456789(String)
+[2019-07-30 12:35:07] [ DEBUG] [http-nio-8080-exec-1] com.yalonglee.learning.account.mapper.AccountMapper.selectOneByQuery [159] - <==      Total: 0
+[2019-07-30 12:35:07] [ DEBUG] [http-nio-8080-exec-1] com.yalonglee.learning.account.mapper.AccountMapper.insert [159] - ==>  Preparing: insert into account ( account.`account_addr`, account.`gmt_create`, account.`gmt_modified` ) values ( ?, now(), now() ) 
+[2019-07-30 12:35:07] [ DEBUG] [http-nio-8080-exec-1] com.yalonglee.learning.account.mapper.AccountMapper.insert [159] - ==> Parameters: 123456789(String)
+[2019-07-30 12:35:07] [ DEBUG] [http-nio-8080-exec-1] com.yalonglee.learning.account.mapper.AccountMapper.insert [159] - <==    Updates: 1

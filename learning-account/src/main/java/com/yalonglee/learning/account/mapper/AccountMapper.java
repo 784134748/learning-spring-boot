@@ -28,7 +28,7 @@ public interface AccountMapper extends AccountBaseMapper<AccountModel> {
      * @param accountAddr
      * @return
      */
-    @Select("select account.id, account.timestamp_lock as account_timestamp_lock, current_timestamp as account_current_timestamp, account.wait_withdraw_cashes_amount as account_wait_withdraw_cashes_amount from account where account.id = (select account.id from account where account_addr = #{accountAddr}) for update")
+    @Select("select account.id, account.timestamp_lock as account_timestamp_lock, current_timestamp as account_current_timestamp, account.wait_withdraw_cashes_amount as account_wait_withdraw_cashes_amount from account where account.id = (select account.id from account where account_addr = #{accountAddr}) for update nowait")
     AccountInfo getRecordLock(@Param("accountAddr") String accountAddr);
 
     /**

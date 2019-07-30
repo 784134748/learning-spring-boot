@@ -53,7 +53,7 @@ public class AccountInfo {
         return accountTotalAvailableAmount - accountWaitWithdrawCashesAmount;
     }
 
-    @ApiModelProperty(value = "账户可转账的金额(账户可用总金额 - 待提现金额)，单位：分", dataType = "Double")
+    @ApiModelProperty(value = "账户可提现的金额(账户可用总金额 - 待提现金额)，单位：分", dataType = "Double")
     public Double getAccountAvailableWithdrawCashesAmount() {
         return accountTotalAvailableAmount - accountWaitWithdrawCashesAmount;
     }

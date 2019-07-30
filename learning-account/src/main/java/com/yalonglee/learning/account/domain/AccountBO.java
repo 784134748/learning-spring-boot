@@ -10,6 +10,8 @@ import com.yalonglee.learning.account.utils.account.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.EnumMap;
 import java.util.List;
@@ -34,7 +36,7 @@ public class AccountBO {
      * @param accountAddr 账户地址
      * @return
      */
-    public boolean create(String accountAddr) {
+    public void create(String accountAddr) {
         AccountModel account = accountMapper.selectOneByQuery(AccountModel.builder()
                 .accountAddr(accountAddr)
                 .build());
@@ -45,7 +47,6 @@ public class AccountBO {
                 .accountAddr(accountAddr)
                 .build();
         accountMapper.insert(account);
-        return true;
     }
 
     /**
@@ -53,7 +54,7 @@ public class AccountBO {
      *
      * @param accountAddr
      */
-    public boolean delete(String accountAddr) {
+    public void delete(String accountAddr) {
         AccountModel account = accountMapper.selectOneByQuery(AccountModel.builder()
                 .accountAddr(accountAddr)
                 .build());
@@ -61,22 +62,29 @@ public class AccountBO {
             throw new BizzRuntimeException("账户地址不存在！");
         }
         accountMapper.deleteByPrimaryKey(account.getId());
-        return true;
     }
 
     /**
      * 账户充值
+     * 事务隔离级别：已提交读（Read committed）
+     *
+     * @param depositParam
      */
-    public boolean deposit(DepositParam depositParam) {
+    @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    public void deposit(DepositParam depositParam) {
         EnumMap<AccountOperation, Object> operation = AccountUtil.deposit(depositParam);
         this.operationBD(operation);
-        return true;
+        log.info("流水号：{},向账户地址为 {} 的账户充值金额 {}", depositParam.getSerialNumber(), depositParam.getTargetAccountAddr(), depositParam.getTotalDepositAmount());
     }
 
     /**
      * 账户转账
+     * 事务隔离级别：已提交读（Read committed）
+     *
+     * @param transferParam
      */
-    public boolean transfer(TransferParam transferParam) {
+    @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    public void transfer(TransferParam transferParam) {
         this.lockAccountBeforeTransfer(transferParam.getSourceAccountAddr(), transferParam.getTotalTransferAmount());
         //完成转账的账户记录集合
         List<CompleteTransferAccountRecordInfo> completeTransferAccountRecordInfoList = accountRecordMapper.queryCompleteTransferAccountRecordInfoList(transferParam.getSourceAccountAddr(), transferParam.getTotalTransferAmount());
@@ -84,13 +92,17 @@ public class AccountBO {
         //转账
         EnumMap<AccountOperation, Object> operation = AccountUtil.transfer(transferParam);
         this.operationBD(operation);
-        return true;
+        log.info("流水号：{},账户地址为 {} 的账户完成转账金额 {}", transferParam.getSerialNumber(), transferParam.getSourceAccountAddr(), transferParam.getTotalTransferAmount());
     }
 
     /**
      * 账户提现
+     * 事务隔离级别：已提交读（Read committed）
+     *
+     * @param withdrawParam
      */
-    public boolean withdraw(WithdrawParam withdrawParam) {
+    @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    public void withdraw(WithdrawParam withdrawParam) {
         //判断账户待提现金额
         AccountInfo lockedAccount = this.lockedAccountWaitWithdrawCashesAmount(withdrawParam.getSourceAccountAddr(), withdrawParam.getTotalWithdrawAmount());
         //完成提现的账户记录集合
@@ -99,17 +111,16 @@ public class AccountBO {
         //提现
         EnumMap<AccountOperation, Object> operation = AccountUtil.withdraw(withdrawParam);
         this.operationBD(operation);
-        //更新待提现金额
-        double updateWaitWithdrawCashes = lockedAccount.getAccountWaitWithdrawCashesAmount() - withdrawParam.getTotalWithdrawAmount();
-        accountMapper.updateWaitWithdrawCashesAmountByAccountAddr(withdrawParam.getSourceAccountAddr(), updateWaitWithdrawCashes);
-        return true;
+        this.cancelWithdrawCashes(withdrawParam);
     }
 
     /**
      * 提现开始前锁定金额
+     * 事务隔离级别：已提交读（Read committed）
      *
      * @param withdrawParam
      */
+    @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public void beforeWithdrawCashes(WithdrawParam withdrawParam) {
         //判断账户可提现金额是否满足条件（锁定状态下）
         AccountInfo account = this.lockedAccountAvailableWithdrawCashesAmount(withdrawParam.getSourceAccountAddr(), withdrawParam.getTotalWithdrawAmount());
@@ -121,9 +132,11 @@ public class AccountBO {
 
     /**
      * 终止提现后释放金额
+     * 事务隔离级别：已提交读（Read committed）
      *
      * @param withdrawParam
      */
+    @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public void cancelWithdrawCashes(WithdrawParam withdrawParam) {
         //判断账户待提现金额是否满足条件（锁定状态下）
         AccountInfo lockedAccount = this.lockedAccountWaitWithdrawCashesAmount(withdrawParam.getSourceAccountAddr(), withdrawParam.getTotalWithdrawAmount());

@@ -18,40 +18,42 @@ public class PaymentAccountTest extends LearningAccountApplicationTests {
     @Test
     public void account() {
 
-        String accountAddr = "yalonglee3";
-        account.create(accountAddr);
-        account.deposit(DepositParam.builder()
-                .serialNumber("123456890")
-                .targetAccountAddr(accountAddr)
-                .totalDepositAmount(10.00D)
-                .build());
+        String accountAddr = "yalonglee4";
+//        account.create(accountAddr);
 //
-//        account.beforeWithdrawCashes(WithdrawParam.builder()
+//        account.deposit(AccountDepositRequest.builder()
+//                .serialNumber("123456890")
+//                .targetAccountAddr(accountAddr)
+//                .totalDepositAmount(10.00D)
+//                .build());
+//
+//        account.beforeWithdrawCashes(AccountWithdrawRequest.builder()
 //                .serialNumber("1234567891")
 //                .sourceAccountAddr(accountAddr)
 //                .totalWithdrawAmount(1.00D)
 //                .build());
 //
-//        account.withdraw(WithdrawParam.builder()
+//        account.withdraw(AccountWithdrawRequest.builder()
 //                .serialNumber("1234567891")
 //                .sourceAccountAddr(accountAddr)
 //                .totalWithdrawAmount(10.00D)
 //                .build());
 //
-//        account.cancelWithdrawCashes(WithdrawParam.builder()
+//        account.cancelWithdrawCashes(AccountWithdrawRequest.builder()
 //                .serialNumber("1234567891")
 //                .sourceAccountAddr(accountAddr)
 //                .totalWithdrawAmount(1.00D)
 //                .build());
-        List<TransferTarget> transferTargetList = Lists.newArrayList();
-        transferTargetList.add(TransferTarget.builder().accountAddr("yalonglee").transferAmount(1.00D).build());
-        transferTargetList.add(TransferTarget.builder().accountAddr("yalonglee1").transferAmount(2.00D).build());
-        account.transfer(TransferParam.builder()
-                .serialNumber("1234567893")
-                .sourceAccountAddr(accountAddr)
-                .totalTransferAmount(3.00D)
-                .transferTargetList(transferTargetList)
-                .build());
+//
+//        List<TransferTarget> transferTargetList = Lists.newArrayList();
+//        transferTargetList.add(TransferTarget.builder().accountAddr("yalonglee").transferAmount(1.00D).build());
+//        transferTargetList.add(TransferTarget.builder().accountAddr("yalonglee1").transferAmount(2.00D).build());
+//        account.transfer(AccountTransferRequest.builder()
+//                .serialNumber("1234567893")
+//                .sourceAccountAddr(accountAddr)
+//                .totalTransferAmount(3.00D)
+//                .transferTargetList(transferTargetList)
+//                .build());
     }
 
 }
