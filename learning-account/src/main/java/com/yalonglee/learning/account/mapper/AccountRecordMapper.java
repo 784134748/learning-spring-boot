@@ -4,6 +4,7 @@ import com.yalonglee.learning.account.model.AccountRecordModel;
 import com.yalonglee.learning.account.utils.account.CompleteTransferAccountRecordInfo;
 import com.yalonglee.learning.account.mapper.base.AccountBaseMapper;
 import com.yalonglee.learning.account.utils.account.AccountRecordInfo;
+import com.yalonglee.learning.account.utils.account.UseUpAccountRecordInfo;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -34,8 +35,8 @@ public interface AccountRecordMapper extends AccountBaseMapper<AccountRecordMode
     /**
      * 批量更新账户记录可用金额为0
      *
-     * @param ids 待更新记录的id
+     * @param updateUseUpAccountRecordInfoList 待更新记录的id
      */
-    void batchUpdateAvailableAmountToZero(@Param("ids") List<Long> ids);
+    void batchUpdateAvailableAmountToZero(@Param("updateUseUpAccountRecordInfoList") List<UseUpAccountRecordInfo> updateUseUpAccountRecordInfoList);
 
 }

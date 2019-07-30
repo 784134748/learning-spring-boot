@@ -52,6 +52,7 @@ public class AccountServiceImpl implements AccountService {
         WithdrawParam withdrawParam = WithdrawParam.builder().build();
         BeanUtils.copyProperties(accountWithdrawRequest, withdrawParam);
 
+        account.beforeWithdrawCashes(withdrawParam);
         account.withdraw(withdrawParam);
     }
 

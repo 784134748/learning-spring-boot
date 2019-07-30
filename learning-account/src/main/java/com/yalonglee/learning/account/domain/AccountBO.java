@@ -104,7 +104,7 @@ public class AccountBO {
     @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public void withdraw(WithdrawParam withdrawParam) {
         //判断账户待提现金额
-        AccountInfo lockedAccount = this.lockedAccountWaitWithdrawCashesAmount(withdrawParam.getSourceAccountAddr(), withdrawParam.getTotalWithdrawAmount());
+        this.lockedAccountWaitWithdrawCashesAmount(withdrawParam.getSourceAccountAddr(), withdrawParam.getTotalWithdrawAmount());
         //完成提现的账户记录集合
         List<CompleteTransferAccountRecordInfo> completeTransferAccountRecordInfoList = accountRecordMapper.queryCompleteTransferAccountRecordInfoList(withdrawParam.getSourceAccountAddr(), withdrawParam.getTotalWithdrawAmount());
         withdrawParam.setCompleteTransferAccountRecordInfoList(completeTransferAccountRecordInfoList);
@@ -252,15 +252,15 @@ public class AccountBO {
      */
     private void operationBD(EnumMap<AccountOperation, Object> operation) {
         List<AccountRecordInfo> insertNewAccountRecordInfoList = (List<AccountRecordInfo>) operation.get(AccountOperation.INSERT_NEW_ACCOUNT_RECORD_INFO_LIST);
-        List<Long> updateUseUpAccountRecordIds = (List<Long>) operation.get(AccountOperation.UPDATE_USE_UP_ACCOUNT_RECORD_IDS);
+        List<UseUpAccountRecordInfo> updateUseUpAccountRecordInfoList = (List<UseUpAccountRecordInfo>) operation.get(AccountOperation.UPDATE_USE_UP_ACCOUNT_RECORD_IDS);
         List<AccountLogInfo> insertNewAccountLogInfoList = (List<AccountLogInfo>) operation.get(AccountOperation.INSERT_NEW_ACCOUNT_LOG_INFO_LIST);
         AccountRecordInfo updateLastAccountRecordInfo = (AccountRecordInfo) operation.get(AccountOperation.UPDATE_LAST_ACCOUNT_RECORD_INFO);
 
         if (insertNewAccountRecordInfoList != null && insertNewAccountRecordInfoList.size() > 0) {
             accountRecordMapper.batchInsert(insertNewAccountRecordInfoList);
         }
-        if (updateUseUpAccountRecordIds != null && updateUseUpAccountRecordIds.size() > 0) {
-            accountRecordMapper.batchUpdateAvailableAmountToZero(updateUseUpAccountRecordIds);
+        if (updateUseUpAccountRecordInfoList != null && updateUseUpAccountRecordInfoList.size() > 0) {
+            accountRecordMapper.batchUpdateAvailableAmountToZero(updateUseUpAccountRecordInfoList);
         }
         if (insertNewAccountLogInfoList != null && insertNewAccountLogInfoList.size() > 0) {
             accountLogMapper.batchInsert(insertNewAccountLogInfoList);

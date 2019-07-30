@@ -1,8 +1,8 @@
 package com.yalonglee.learning.account.mapper;
 
-import com.yalonglee.learning.account.utils.account.AccountInfo;
 import com.yalonglee.learning.account.mapper.base.AccountBaseMapper;
 import com.yalonglee.learning.account.model.AccountModel;
+import com.yalonglee.learning.account.utils.account.AccountInfo;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
@@ -28,7 +28,7 @@ public interface AccountMapper extends AccountBaseMapper<AccountModel> {
      * @param accountAddr
      * @return
      */
-    @Select("select account.id, account.timestamp_lock as account_timestamp_lock, current_timestamp as account_current_timestamp, account.wait_withdraw_cashes_amount as account_wait_withdraw_cashes_amount from account where account.id = (select account.id from account where account_addr = #{accountAddr}) for update nowait")
+    @Select("select account.id, account.timestamp_lock as account_timestamp_lock, current_timestamp as account_current_timestamp, account.wait_withdraw_cashes_amount as account_wait_withdraw_cashes_amount from account where account.id = (select account.id from account where account_addr = #{accountAddr}) for update")
     AccountInfo getRecordLock(@Param("accountAddr") String accountAddr);
 
     /**
@@ -56,7 +56,8 @@ public interface AccountMapper extends AccountBaseMapper<AccountModel> {
             "from account, account_record\n" +
             "where\n" +
             "account.account_addr = #{accountAddr}\n" +
-            "and account_record.account_addr = account.account_addr")
+            "and account_record.account_addr = account.account_addr\n" +
+            "group by account.wait_withdraw_cashes_amount, account.timestamp_lock")
     AccountInfo getAccountInfoByAccountAddr(@Param("accountAddr") String accountAddr);
 
 

@@ -184,9 +184,9 @@
     </insert>
 
     <update id="batchUpdateAvailableAmountToZero" parameterType="java.util.List">
-        <foreach collection="ids" item="item" index="index" separator=";">
+        <foreach collection="updateUseUpAccountRecordInfoList" item="item" index="index" separator=";">
             update account_record set account_record.`available_amount` = 0, account_record.`index` =
-            account_record.`index` + 1 where account_record.id = #{item}
+            account_record.`index` = #{item.index} where account_record.id = #{item.accountRecordId}
         </foreach>
     </update>
 

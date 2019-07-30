@@ -1,6 +1,5 @@
 package com.yalonglee.learning.account.request;
 
-import com.yalonglee.learning.account.utils.account.CompleteTransferAccountRecordInfo;
 import com.yalonglee.learning.account.utils.account.TransferTarget;
 import lombok.Builder;
 import lombok.Data;
@@ -26,10 +25,6 @@ public class AccountTransferRequest {
      * 转账金额
      */
     Double totalTransferAmount;
-    /**
-     * 可支付的账户记录
-     */
-    List<CompleteTransferAccountRecordInfo> completeTransferAccountRecordInfoList;
     /**
      * 入账账户地址
      */

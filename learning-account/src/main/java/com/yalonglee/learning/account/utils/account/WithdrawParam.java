@@ -11,10 +11,7 @@ import java.util.List;
 @Data
 @Builder
 public class WithdrawParam {
-    /**
-     * 提现账户信息
-     */
-    private AccountInfo withdrawAccount;
+
     /**
      * 流水号
      */

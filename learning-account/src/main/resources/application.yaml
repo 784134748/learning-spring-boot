@@ -1,7 +1,7 @@
 #支付账户数据源
 payment-account:
   datasource:
-    url: jdbc:mysql://106.14.15.55:3306/test1?useAffectedRows=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
+    url: jdbc:mysql://106.14.15.55:3306/test1?useAffectedRows=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
     username: root
     password: 123456
 

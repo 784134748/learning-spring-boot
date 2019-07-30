@@ -9,10 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
-import java.util.Comparator;
-import java.util.EnumMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -213,7 +210,7 @@ public class AccountUtil {
         //被消耗的最后一条账户记录
         AccountRecordInfo lastAccountRecord = null;
         //所有可用金额被耗尽的账户记录的ID（最后一条被消耗的账户记录除外）
-        List<Long> updateUseUpAccountRecordIds = Lists.newArrayList();
+        List<UseUpAccountRecordInfo> updateUseUpAccountRecordInfoList = Lists.newArrayList();
         //新增的账户记录
         List<AccountRecordInfo> insertNewAccountRecordInfoList = Lists.newArrayList();
         //新增的转账记录
@@ -221,13 +218,19 @@ public class AccountUtil {
         //新增的账户变更记录
         List<AccountLogInfo> insertNewAccountLogInfoList = Lists.newArrayList();
 
-
+        //支付记录倒序排序
+        completeTransferAccountRecordInfoList.stream()
+                .sorted(Comparator.comparing(CompleteTransferAccountRecordInfo::getSumAccountRecordAvailableAmount))
+                .collect(Collectors.toList());
+        Collections.reverse(completeTransferAccountRecordInfoList);
         //获取支付记录的迭代器
         Iterator<CompleteTransferAccountRecordInfo> iterator = completeTransferAccountRecordInfoList.listIterator();
         //迭代器当前位置的paymentDTO
         CompleteTransferAccountRecordInfo payment = CompleteTransferAccountRecordInfo.builder().build();
         //迭代器是否继续迭代(当前账户记录中的可用金额是否被消耗殆尽)
         boolean isUseUp = true;
+        //账户记录变更的次数
+        int index = 0;
 
         for (TransferTarget transferTarget : transferTargetList) {
             //是否已发现本次转账涉及的起点账户记录
@@ -237,9 +240,13 @@ public class AccountUtil {
             //涉及本次转账的账户记录
             List<CompleteTransferAccountRecordInfo> accountRecordInfoList = Lists.newArrayList();
             do {
+                //上一条账户记录被耗尽，取下一条账户记录
                 if (isUseUp) {
                     payment = iterator.next();
+                    index = payment.getIndex();
                 }
+                //循环一次，账户记录变更次数递增1
+                index += 1;
                 /**
                  * A:本次转账涉及的起点账户记录累计金额减去可用金额
                  * B:累计已转账金额
@@ -266,16 +273,23 @@ public class AccountUtil {
                 }
                 //统计所有可用金额被耗尽的账户记录的ID
                 if (iterator.hasNext() && isUseUp) {
-                    updateUseUpAccountRecordIds.add(payment.getAccountRecordId());
+                    updateUseUpAccountRecordInfoList.add(UseUpAccountRecordInfo.builder()
+                            .accountRecordId(payment.getAccountRecordId())
+                            .index(index)
+                            .build());
                 }
                 //统计被消耗的最后一条账户记录（没有下一条记录，且该对象只被赋值一次）
                 if ((!iterator.hasNext()) && lastAccountRecord == null) {
                     AccountRecordInfo accountRecordTmp = AccountRecordInfo.builder()
                             .id(payment.getAccountRecordId())
                             .accountRecordAvailableAmount(payment.getSumAccountRecordAvailableAmount() - total)
-                            .index(payment.getIndex() + 1)
+                            .index(index)
                             .build();
                     lastAccountRecord = accountRecordTmp;
+                }
+                //更新账户记录的变更次数
+                if (lastAccountRecord != null && index > lastAccountRecord.getIndex()) {
+                    lastAccountRecord.setIndex(index);
                 }
                 //获取值大于等于零的尾间距
                 if (!isFindEnd) {
@@ -313,7 +327,7 @@ public class AccountUtil {
         }
 
         EnumMap<AccountOperation, Object> operation = new EnumMap<>(AccountOperation.class);
-        operation.put(AccountOperation.UPDATE_USE_UP_ACCOUNT_RECORD_IDS, updateUseUpAccountRecordIds);
+        operation.put(AccountOperation.UPDATE_USE_UP_ACCOUNT_RECORD_IDS, updateUseUpAccountRecordInfoList);
         operation.put(AccountOperation.INSERT_NEW_ACCOUNT_LOG_INFO_LIST, insertNewAccountLogInfoList);
         operation.put(AccountOperation.INSERT_NEW_ACCOUNT_RECORD_INFO_LIST, insertNewAccountRecordInfoList);
         operation.put(AccountOperation.INSERT_NEW_TRANSFER_INFO_LIST, insertNewTransferInfoList);
@@ -351,6 +365,10 @@ public class AccountUtil {
             long accountRecordId = autowiredSnowflakeIdWorker.genId();
             //来源账户记录变更次数
             int sourceAccountRecordIndex = completeTransferAccountRecordInfo.getIndex();
+            //出账账户记录变更次数
+            int newSourceAccountRecordIndex = sourceAccountRecordIndex + 1;
+            //入账账户记录变更次数
+            int newTargetAccountRecordIndex = AccountUtil.SYSTEM_INDEX;
             //冻结的金额
             double frozenAmount = completeTransferAccountRecordInfo.getAccountRecordFrozenAmount();
             //支付记录剩余的可用金额
@@ -384,9 +402,8 @@ public class AccountUtil {
                     .accountOperationType(accountOperationType)
                     .sourceAccountRecordIndex(sourceAccountRecordIndex)
                     .accountRecordId(fromAccountRecordId)
-                    .accountRecordIndex(AccountUtil.SYSTEM_INDEX)
                     .accountAddr(sourceAccountAddr)
-                    .accountRecordIndex(sourceAccountRecordIndex + 1)
+                    .accountRecordIndex(newSourceAccountRecordIndex)
                     .availableAmount(leftAvailableAmount)
                     .frozenAmount(frozenAmount)
                     .build();
@@ -398,7 +415,7 @@ public class AccountUtil {
                     .sourceAccountRecordIndex(sourceAccountRecordIndex)
                     .accountAddr(targetAccountAddr)
                     .accountRecordId(accountRecordId)
-                    .accountRecordIndex(SYSTEM_INDEX)
+                    .accountRecordIndex(newTargetAccountRecordIndex)
                     .availableAmount(payAvailableAmount)
                     .frozenAmount(frozenAmount)
                     .build();
@@ -430,6 +447,8 @@ public class AccountUtil {
                 insertNewTransferInfoList.add(newSourceTransferInfo);
                 insertNewTransferInfoList.add(newTargetTransferInfo);
             }
+            completeTransferAccountRecordInfo.setIndex(newSourceAccountRecordIndex);
+            completeTransferAccountRecordInfo.setAccountRecordAvailableAmount(leftAvailableAmount);
         }
     }
 
